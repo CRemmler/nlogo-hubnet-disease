@@ -60111,41 +60111,10 @@ if count turtles with [infected?] > 0
 ]
 end
 
-to go-0.75
-every 0.75
-[
-if wander? [ androids-wander ]
-ask turtles with [ infected? ]
-[ spread-disease ]
-if count turtles with [infected?] > 0
-[ 
-  tick 
-  let n count turtles with [infected?]
-  plotxy ticks - 1 n
-  set num-infected-last-plotted n 
-]
-]
-end
-
-to go-0.5
-every 0.5
-[
-if wander? [ androids-wander ]
-ask turtles with [ infected? ]
-[ spread-disease ]
-if count turtles with [infected?] > 0
-[ 
-  tick 
-  let n count turtles with [infected?]
-  plotxy ticks - 1 n
-  set num-infected-last-plotted n 
-]
-]
-end
-
 to go-0.25
-every 0.25
-[
+listen-clients
+every 0.25 [
+;;allow the androids to wander around the view
 if wander? [ androids-wander ]
 ask turtles with [ infected? ]
 [ spread-disease ]
@@ -60153,8 +60122,8 @@ if count turtles with [infected?] > 0
 [ 
   tick 
   let n count turtles with [infected?]
-  plotxy ticks - 1 n
-  set num-infected-last-plotted n 
+    plotxy ticks - 1 n
+    set num-infected-last-plotted n 
 ]
 ]
 end
@@ -60974,40 +60943,6 @@ NIL
 1
 0
 String
-
-BUTTON
-431
-530
-509
-563
-NIL
-go-0.75
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-511
-530
-589
-563
-NIL
-go-0.5
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
 
 BUTTON
 591
