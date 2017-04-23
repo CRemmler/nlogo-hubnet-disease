@@ -42872,16 +42872,6 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     this._genVarUpdate("color");
   };
   
-  setBaseshape = function(baseshape) {
-    this._baseshape = baseshape;
-    this._genVarUpdate("baseshape");
-  };
-
-  setInfected = function(infected) {
-    this._infected = infected;
-    this._genVarUpdate("infected");
-  };
-  
   setUserid = function(userid) {
     this._userid = userid;
     this._genVarUpdate("userid");
@@ -42961,11 +42951,7 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
       return this.tiemode;
     }), setTieMode), new MutableVariableSpec('userid', (function() {
       return this._userid;
-    }), setUserid), new MutableVariableSpec('infected', (function() {
-      return this._infected;
-    }), setInfected), new MutableVariableSpec('baseshape', (function() {
-      return this._baseshape;
-    }), setBaseshape) 
+    }), setUserid)
   ];
 
   module.exports = {
@@ -45632,16 +45618,6 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     this._genVarUpdate("userid");
   };
   
-  setInfected = function(infected) {
-    this._infected = infected;
-    this._genVarUpdate("infected");
-  };
-  
-  setBaseshape = function(baseshape) {
-    this._baseshape = baseshape;
-    this._genVarUpdate("baseshape");
-  };
-  
   setSize = function(size) {
     this._size = size;
     this._genVarUpdate("size");
@@ -45747,11 +45723,7 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
       return this.ycor;
     }), setYcor), new MutableVariableSpec('userid', (function() {
       return this._userid;
-    }), setUserid), new MutableVariableSpec('infected', (function() {
-      return this._infected;
-    }), setInfected), new MutableVariableSpec('baseshape', (function() {
-      return this._baseshape;
-    }), setBaseshape)
+    }), setUserid)
   ];
 
   module.exports = {
@@ -46040,7 +46012,7 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
 
     Turtle.prototype.linkManager = void 0;
 
-    function Turtle(world, id1, _genUpdate, _registerLineDraw, _registerTurtleStamp, _registerDeath, _createTurtle, _removeTurtle, _color, _heading, xcor, ycor, breed, _label, _labelcolor, _hidden, _size, _givenShape, _userid, _infected, _baseshape, genPenManager) {
+    function Turtle(world, id1, _genUpdate, _registerLineDraw, _registerTurtleStamp, _registerDeath, _createTurtle, _removeTurtle, _color, _heading, xcor, ycor, breed, _label, _labelcolor, _hidden, _size, _givenShape, _userid, genPenManager) {
       var varNames;
       this.world = world;
       this.id = id1;
@@ -46063,8 +46035,6 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
       this._size = _size != null ? _size : 1.0;
       this._givenShape = _givenShape;
       this._userid = _userid != null ? _userid : "";
-      this._infected = _infected != null ? _infected : false;
-      this._baseshape = _baseshape != null ? _baseshape : "";
       if (genPenManager == null) {
         genPenManager = (function(_this) {
           return function(self) {
@@ -47197,18 +47167,38 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     HubnetManager.prototype.getHubnetMessageTag = function() {
       return hubnetMessageTag;
     };
-    HubnetManager.prototype.setHubnetExitMessage = function(messageTag) {
+    HubnetManager.prototype.setHubnetMessageTag = function(messageTag) {
       hubnetMessageTag = messageTag;
     };
     
     // Commands
     HubnetManager.prototype.hubnetFetchMessage = function() {
-      console.log("wassup hubnetFetchMessage");
+      processMessage(messageQueue.shift());
     };
-    HubnetManager.prototype.hubnetSend = function(x, y, z) {
-      console.log("wassup hubnetSend " + x + " " + y + " " + z);
+    HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
+      socket.emit("send reporter", {
+        hubnetMessageSource: messageSource, 
+        hubnetMessageTag: messageTag, 
+        hubnetMessage: message
+      });
     };
-
+    
+    var processMessage = function(m) {
+      console.log(m.messageSource+" "+m.messageTag+" "+m.message);
+      world.hubnetManager.setHubnetMessageWaiting(false);
+      world.hubnetManager.setHubnetEnterMessage(false);
+      world.hubnetManager.setHubnetExitMessage(false);
+      world.hubnetManager.setHubnetMessageSource(m.messageSource);
+      world.hubnetManager.setHubnetMessageTag(m.messageTag);
+      world.hubnetManager.setHubnetMessage(m.message);
+      if (m.messageTag === "hubnet-enter-message") {
+        world.hubnetManager.setHubnetEnterMessage(true);
+      }
+      if (m.messageTag === "hubnet-exit-message") {
+        world.hubnetManager.setHubnetExitMessage(true);
+      }
+    }
+    
     return HubnetManager;
     
   })();
@@ -47260,7 +47250,6 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     }
         
     TurtleManager.prototype.clearTurtles = function() {
-      //console.log("clear turtles");
       this.turtles().forEach(function(turtle) {
         return ignoring(DeathInterrupt)((function(_this) {
           return function() {
@@ -47338,10 +47327,10 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
       })(this));
     };
 
-    TurtleManager.prototype._createTurtle = function(color, heading, xcor, ycor, breed, label, lcolor, isHidden, size, shape, userid, infected, baseshape, genPenManager) {
+    TurtleManager.prototype._createTurtle = function(color, heading, xcor, ycor, breed, label, lcolor, isHidden, size, shape, userid, genPenManager) {
       var id, turtle;
       id = this._idManager.next();
-      turtle = new Turtle(this._world, id, this._updater.updated, this._updater.registerPenTrail, this._updater.registerTurtleStamp, this._updater.registerDeadTurtle, this._createTurtle, this._removeTurtle, color, heading, xcor, ycor, breed, label, lcolor, isHidden, size, shape, userid, infected, baseshape, genPenManager);
+      turtle = new Turtle(this._world, id, this._updater.updated, this._updater.registerPenTrail, this._updater.registerTurtleStamp, this._updater.registerDeadTurtle, this._createTurtle, this._removeTurtle, color, heading, xcor, ycor, breed, label, lcolor, isHidden, size, shape, userid, genPenManager);
       this._updater.updated(turtle).apply(null, Builtins.turtleBuiltins);
       this._turtles.push(turtle);
       this._turtlesById[id] = turtle;
@@ -48171,7 +48160,6 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     };
 
     PlotManager.prototype.plotPoint = function(x, y) {
-      console.log("plotPoint");
       this._withPlot(function(plot) {
         return plot.plotPoint(x, y);
       });
@@ -50908,9 +50896,7 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
         size: ["SIZE", turtle._size],
         xcor: ["XCOR", turtle.xcor],
         ycor: ["YCOR", turtle.ycor],
-        userid: ["USERID", turtle._userid],
-        infected: ["INFECTED", turtle._infected],
-        baseshape: ["BASESHAPE", turtle._baseshape]
+        userid: ["USERID", turtle._userid]
       };
     };
 
@@ -59997,15 +59983,13 @@ qs-items     ;; list of quickstart instructions
 
 num-infected-last-plotted ;; used in plotting only
                         ;; number of turtles that had infected = true the last time we plotted.
-color-string
-my-code
 ]
 
 turtles-own
 [
-;; CR infected    ;; if a turtle is sick, infected is true, otherwise, it is false
-;; CR baseshape   ;; original shape of a turtle
-stepsize    ;; the amount that a turtle will go forward in the current direction
+  infected?    ;; if a turtle is sick, infected is true, otherwise, it is false
+  base-shape   ;; original shape of a turtle
+  step-size    ;; the amount that a turtle will go forward in the current direction
 ]
 
 breed [ androids android ]  ;; created by the CREATE ANDROIDS button; not controlled by anyone, but can become sick and spread sickness
@@ -60013,7 +59997,7 @@ breed [ students student ]  ;; created and controlled by the clients
 
 students-own
 [
-;; CR user-id  ;; unique id, input by the client when they log in, to identify each student turtle
+;;  user-id  ;; unique id, input by the client when they log in, to identify each student turtle
 ]
 
 
@@ -60044,10 +60028,10 @@ to cure-all
 
 ask turtles
 [
-set infected false
-;; CR if breed = students
-;; CR [ update-sick?-monitor ]
-set shape baseshape
+set infected? false
+if breed = students
+[ update-sick?-monitor ]
+set shape base-shape
 ]
 set run-number run-number + 1
 reset-ticks
@@ -60080,10 +60064,10 @@ create-androids number
 move-to one-of patches
 face one-of neighbors4
 set color gray
-set infected false
-set baseshape "android"
-set shape baseshape
-set stepsize 1
+set infected? false
+set base-shape "android"
+set shape base-shape
+set step-size 1
 ]
 end
 
@@ -60093,7 +60077,7 @@ end
 
 to go
 ;; get commands and data from the clients
-;; listen-clients
+  listen-clients
 
 ;; CR every 0.1
 every 1
@@ -60101,20 +60085,20 @@ every 1
 ;;allow the androids to wander around the view
 if wander? [ androids-wander ]
 
-ask turtles with [ infected ]
+ask turtles with [ infected? ]
 [ spread-disease ]
 
 ;; keeps track of the number of times through the go procedure (if there is at least one turtle infected)
 ;; use an ifelse here to avoid redundant displays because tick forces a display.
 ;; we only want to keep track of time once the first turtle has been infected.
-;; CR ifelse count turtles with [infected] > 0
+;; CR ifelse count turtles with [infected?] > 0
 ;; CR [ tick ]
 ;; CR [ display ]
 
-if count turtles with [infected] > 0
+if count turtles with [infected?] > 0
 [ 
   tick 
-  let n count turtles with [infected]
+  let n count turtles with [infected?]
   ;;if n > num-infected-last-plotted 
   ;;[
     plotxy ticks - 1 n
@@ -60129,12 +60113,12 @@ to go-0.75
 every 0.75
 [
 if wander? [ androids-wander ]
-ask turtles with [ infected ]
+ask turtles with [ infected? ]
 [ spread-disease ]
-if count turtles with [infected] > 0
+if count turtles with [infected?] > 0
 [ 
   tick 
-  let n count turtles with [infected]
+  let n count turtles with [infected?]
   plotxy ticks - 1 n
   set num-infected-last-plotted n 
 ]
@@ -60145,12 +60129,12 @@ to go-0.5
 every 0.5
 [
 if wander? [ androids-wander ]
-ask turtles with [ infected ]
+ask turtles with [ infected? ]
 [ spread-disease ]
-if count turtles with [infected] > 0
+if count turtles with [infected?] > 0
 [ 
   tick 
-  let n count turtles with [infected]
+  let n count turtles with [infected?]
   plotxy ticks - 1 n
   set num-infected-last-plotted n 
 ]
@@ -60161,12 +60145,12 @@ to go-0.25
 every 0.25
 [
 if wander? [ androids-wander ]
-ask turtles with [ infected ]
+ask turtles with [ infected? ]
 [ spread-disease ]
-if count turtles with [infected] > 0
+if count turtles with [infected?] > 0
 [ 
   tick 
-  let n count turtles with [infected]
+  let n count turtles with [infected?]
   plotxy ticks - 1 n
   set num-infected-last-plotted n 
 ]
@@ -60188,9 +60172,9 @@ end
 ;; additional check infect called when student moves to new patch
 ;; added to avoid rewarding movement
 to student-move-check-infect
-if infected
+if infected?
 [ spread-disease ]
-ask other turtles-here with [ infected ]
+ask other turtles-here with [ infected? ]
 [ ask myself [ maybe-get-sick ] ]
 end
 
@@ -60201,43 +60185,43 @@ end
 
 ;; turtle procedure -- roll the dice and maybe get sick
 to maybe-get-sick
-if not infected [
+if not infected? [
 if ((random 100) + 1) <= infection-chance
 [ get-sick ] ]
 end
 
 ;; turtle procedure -- set the appropriate variables to make this turtle sick
 to get-sick
-set infected true
+set infected? true
 set-sick-shape
-;; CR if breed = students
-;; CR [ update-sick?-monitor ]
+  if breed = students
+  [ update-sick?-monitor ]
 end
 
 ;; turtle procedure -- change the shape of turtles to its sick shape
-;; if show-sick? is true and change the shape to the baseshape if
+;; if show-sick? is true and change the shape to the base-shape if
 ;; show-sick? is false
 to set-sick-shape
 ifelse show-sick?
 [
 ;; we want to check if the turtles shape is already a sick shape
 ;; to prevent flickering in the turtles
-if shape != word baseshape " sick"
-[ set shape word baseshape " sick" ]
+if shape != word base-shape " sick"
+[ set shape word base-shape " sick" ]
 ]
 [
-;; we want to check if the turtles shape is already a baseshape
+;; we want to check if the turtles shape is already a base-shape
 ;; to prevent flickering in the turtles
-if shape != baseshape
-[ set shape baseshape ]
+if shape != base-shape
+[ set shape base-shape ]
 ]
 end
 
 ;; causes the initial infection in the turtle population --
 ;; infects a random healthy turtle until the desired number of
-;; turtles are infected
+;; turtles are infected?
 to infect-turtles
-let healthy-turtles turtles with [ not infected ]
+let healthy-turtles turtles with [ not infected? ]
 
 ifelse count healthy-turtles < initial-number-sick
 [
@@ -60246,7 +60230,7 @@ ask healthy-turtles
   get-sick
   set-sick-shape
 ]
-;; CR user-message "There are no more healthy turtles to infect.  Infection stopped."
+user-message "There are no more healthy turtles to infect.  Infection stopped."
 stop
 ]
 [
@@ -60264,60 +60248,58 @@ end
 
 ;; determines which client sent a command, and what the command was
 to listen-clients
-;; CR while [ hubnet-message-waiting? ]
-;; CR [
-;; CR hubnet-fetch-message
-;; CR ifelse hubnet-enter-message?
-;; CR ifelse true
-;; CR [ create-new-student ]
-;; CR [
-  ;; CR ifelse hubnet-exit-message?
-  ;; CR [ remove-student ]
-  ;; CR [
-  ;; CR  ask students with [ user-id = hubnet-message-source ]
-  ;; CR    [ execute-command hubnet-message-tag ]
-  ;; CR ]
-;; CR ]
-;; CR ]
+ 
+ if hubnet-message-waiting? [
+   hubnet-fetch-message
+   ifelse hubnet-enter-message?
+   [ create-new-student ]
+   [ 
+     ifelse hubnet-exit-message?
+     [ remove-student ]
+     [
+       ask students with [ userid = hubnet-message-source ]
+       [ execute-command hubnet-message-tag ]
+     ]
+   ]
+ ]
 
-;; CR ask students
-;; CR [ up date-sick?-monitor ]
+  ;;ask students
+  ;;[ update-sick?-monitor ]
 end
 
 ;; NetLogo knows what each student turtle is supposed to be
 ;; doing based on the tag sent by the node:
-;; stepsize - set the turtle's stepsize
-;; Up    - make the turtle move up by stepsize
-;; Down  - make the turtle move down by stepsize
-;; Right - make the turtle move right by stepsize
-;; Left  - make the turtle move left by stepsize
+;; step-size - set the turtle's step-size
+;; Up    - make the turtle move up by step-size
+;; Down  - make the turtle move down by step-size
+;; Right - make the turtle move right by step-size
+;; Left  - make the turtle move left by step-size
 ;; Get a Different Turtle - change the turtle's shape and color
 to execute-command [command]
-;; CR if command = "stepsize"
-;; CR [
-;; CR set stepsize hubnet-message
-;; CR stop
-;; CR ]
-;; CR if command = "Up"
-;; CR [ execute-move 0 stop ]
-;; CR if command = "Down"
-;; CR [ execute-move 180 stop ]
-;; CR if command = "Right"
-;; CR [ execute-move 90 stop ]
-;; CR if command = "Left"
-;; CR [ execute-move 270 stop ]
-;; if command = "Change Appearance"
-;; [ execute-change-turtle stop ]
+  if command = "step-size"
+  [
+    set step-size hubnet-message
+    stop
+  ]
+  if command = "Up"
+  [ execute-move 0 stop ]
+  if command = "Down"
+  [ execute-move 180 stop ]
+  if command = "Right"
+  [ execute-move 90 stop ]
+  if command = "Left"
+  [ execute-move 270 stop ]
+  if command = "Change Appearance"
+  [ execute-change-turtle stop ]
 end
 
 ;; Create a turtle, set its shape, color, and position
 ;; and tell the node what its turtle looks like and where it is
 to create-new-student
-;; CR show "create-new-student"
 create-students 1
 [
 setup-student-vars
-;; CR send-info-to-clients
+send-info-to-clients
 
 ;; we want to make sure that the clients all have the same plot ranges,
 ;; so when somebody logs in, set the plot ranges to themselves so that
@@ -60329,16 +60311,15 @@ end
 
 ;; sets the turtle variables to appropriate initial values
 to setup-student-vars  ;; turtle procedure
-;; CR show "setup-student-vars"
-;; CR set user-id hubnet-message-source
+set userid hubnet-message-source
 set-unique-shape-and-color
 move-to one-of patches
-;; CR face one-of neighbors4
-set infected false
-set stepsize 1
+face one-of neighbors4
+set infected? false
+set step-size 1
 end
 
-;; pick a baseshape and color for the turtle
+;; pick a base-shape and color for the turtle
 to set-unique-shape-and-color
 let code random max-possible-codes
 while [member? code used-shape-colors and count students < max-possible-codes]
@@ -60347,66 +60328,65 @@ set code random max-possible-codes
 ]
 set used-shape-colors (lput code used-shape-colors)
 let key (code mod length shape-names)
-set baseshape item key shape-names
-set shape baseshape
+set base-shape item key shape-names
+set shape base-shape
 set key code / length shape-names
 set color item floor key colors
 end
 
 ;; report the string version of the turtle's color
-;; CR to-report color-string [color-value]
-;; CR report item (position color-value colors) color-names
-;; CR end
+to-report color-string [color-value]
+report item (position color-value colors) color-names
+end
 
 ;; sends the appropriate monitor information back to the client
 to send-info-to-clients
-;; CR hubnet-send user-id "You are a:" (word (color-string color) " " baseshape)
-;; CR hubnet-send user-id "Located at:" (word "(" pxcor "," pycor ")")
-;; CR update-sick?-monitor
+  hubnet-send userid "You are a:" (word (color-string color) " " base-shape)
+  hubnet-send userid "Located at:" (word "(" pxcor "," pycor ")")
+  update-sick?-monitor
 end
 
 to update-sick?-monitor
-;; CR ifelse show-sick-on-clients?
-;; CR [ hubnet-send user-id "Sick?" infected ]
-;; CR [ hubnet-send user-id "Sick?" "N/A" ]
+  ifelse show-sick-on-clients?
+  [ hubnet-send userid "Sick?" infected? ]
+  [ hubnet-send userid "Sick?" "N/A" ]
 end
 
 ;; Kill the turtle, set its shape, color, and position
 ;; and tell the node what its turtle looks like and where it is
 to remove-student
-;; CR ask students with [user-id = hubnet-message-source]
-;; CR [
-;; CR set used-shape-colors remove my-code used-shape-colors
-;; CR die
-;; CR ]
+  ask students with [userid = hubnet-message-source]
+  [
+    set used-shape-colors remove my-code used-shape-colors
+    die
+  ]
 end
 
 ;; translates a student turtle's shape and color into a code
-;; CR to-report my-code
-;; CR report (position baseshape shape-names) + (length shape-names) * (position color colors)
-;; CR end
+to-report my-code
+  report (position base-shape shape-names) + (length shape-names) * (position color colors)
+end
 
-;; Cause the students to move forward stepsize in new-heading's heading
+;; Cause the students to move forward step-size in new-heading's heading
 to execute-move [new-heading]
-;; CR set heading new-heading
-;; CR fd stepsize
-;; CR hubnet-send user-id "Located at:" (word "(" pxcor "," pycor ")")
+  set heading new-heading
+  fd step-size
+  hubnet-send userid "Located at:" (word "(" pxcor "," pycor ")")
 
-;; maybe infect or get infected by turtles on the patch student moved to
-;; CR student-move-check-infect
+  ;; maybe infect or get infected by turtles on the patch student moved to
+  student-move-check-infect
 end
 
 to execute-change-turtle
-;; CR ask students
-;; CR ask students with [user-id = hubnet-message-source]
-;; CR [
-;; CR set used-shape-colors remove my-code used-shape-colors
-;; CR show-turtle
-;; CR set-unique-shape-and-color
-;; CR hubnet-send user-id "You are a:" (word (color-string color) " " baseshape)
-;; CR if infected
-;; CR [ set-sick-shape ]
-;; CR ]
+  ask students with [userid = hubnet-message-source]
+  [
+    set used-shape-colors remove my-code used-shape-colors
+    show-turtle
+    set-unique-shape-and-color
+    hubnet-send userid "You are a:" (word (color-string color) " " base-shape)
+    if infected?
+    [ set-sick-shape ]
+  ]
 end
 
 ;;; this procedure is handy for testing out additional shapes and colors;
@@ -60699,7 +60679,7 @@ MONITOR
 219
 328
 Number Sick
-count turtles with [infected]
+count turtles with [infected?]
 0
 1
 11
@@ -60939,7 +60919,7 @@ SLIDER
 95
 153
 128
-stepsize
+step-size
 client-step-size
 1.0
 5.0
@@ -61660,8 +61640,8 @@ SLIDER
 95
 153
 128
-stepsize
-stepsize
+step-size
+step-size
 1.0
 5.0
 1

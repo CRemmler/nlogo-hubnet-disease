@@ -1,65 +1,40 @@
 jQuery(document).ready(function() {
 
-  //-------------------//
-  // Events From login
-  //-----------------------//
-  
   // when student submits room name
   $("#submitRoomString").click(function() {
     var myRoom = $("#roomString").val();
     socket.emit("enter room", {room: myRoom});
   });
   
-  //-----------------------//
-  // Events From teacher
-  //-----------------------//
-  
-  //-----------------------//
-  // Events From student
-  //-----------------------//
-  
-  var infectionChance = +$("#netlogo-slider-2 .netlogo-slider-value input").val();
-  //socket.emit("change infection chance", {infectionChance, infectionChance});  
-  
-  // when teacher clicks infection-chance slider
-  $("#netlogo-slider-2").click(function() {
-    infectionChance = +$("#netlogo-slider-2 .netlogo-slider-value input").val();
-    socket.emit("change infection chance", {infectionChance, infectionChance});
-  });
-  
-  var stepsize = +$("#netlogo-slider-26 .netlogo-slider-value input").val();
   // when student clicks stepsize slider
   $("#netlogo-slider-26").click(function() {
     stepsize = +$("#netlogo-slider-26 .netlogo-slider-value input").val();
+    socket.emit("send command", {hubnetMessageTag: "step-size", hubnetMessage: stepsize});
   });
   
   // when student pushes down button
   $("#netlogo-button-21").click(function() {
-    move(180);
+    socket.emit("send command", {hubnetMessageTag: "Down", hubnetMessage: ""});
   });
   
   // when student pushes up button
   $("#netlogo-button-22").click(function() {
-    move(0);
+    socket.emit("send command", {hubnetMessageTag: "Up", hubnetMessage: ""});
   });
   
   // when student pushes right button
   $("#netlogo-button-23").click(function() {
-    move(90);
+    socket.emit("send command", {hubnetMessageTag: "Right", hubnetMessage: ""});
   });
   
   // when student pushes left button
   $("#netlogo-button-24").click(function() {
-    move(270);
+    socket.emit("send command", {hubnetMessageTag: "Left", hubnetMessage: ""});
   });
   
+  // when student pushes change appearance button
   $("#netlogo-button-25").click(function() {
-    socket.emit("change appearance"); 
+    socket.emit("send command", {hubnetMessageTag: "Change Appearance", hubnetMessage: ""});
   });
-  
-  function move(degrees) {
-    socket.emit("execute move", {heading: degrees, stepsize: stepsize}); 
-    socket.emit("check infect"); 
-  }
   
 });

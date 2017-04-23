@@ -15665,8 +15665,8 @@
         this.a |= 1;
         this.IS = W(I()) | Jp(I());
         this.a |= 2;
-        for (var a = W(I()), a = (new E).f("WHO", a), c = EF(this), c = (new E).f("COLOR", c), d = W(I()), d = (new E).f("HEADING", d), e = W(I()), e = (new E).f("XCOR", e), f = W(I()), f = (new E).f("YCOR", f), h = Ip(I()), h = (new E).f("SHAPE", h), k = tc(), k = (new E).f("LABEL", k), r = EF(this), r = (new E).f("LABEL-COLOR", r), v = Kp(I()), v = (new E).f("BREED", v), C = Hp(I()), C = (new E).f("HIDDEN?", C), G = W(I()), G = (new E).f("SIZE", G), U = W(I()), U = (new E).f("PEN-SIZE", U), V = EF(this), V = (new E).f("USERID", V), X = Hp(I()), X = (new E).f("INFECTED", X), Y = EF(this), Y = (new E).f("BASESHAPE", Y),
-                ba = Ip(I()), a = [a, c, d, e, f, h, k, r, v, C, G, U, V, X, Y, (new E).f("PEN-MODE", ba)], c = lc(new mc, hf()), d = 0, e = a.length | 0; d < e;) pc(c, a[d]), d = 1 + d | 0;
+        for (var a = W(I()), a = (new E).f("WHO", a), c = EF(this), c = (new E).f("COLOR", c), d = W(I()), d = (new E).f("HEADING", d), e = W(I()), e = (new E).f("XCOR", e), f = W(I()), f = (new E).f("YCOR", f), h = Ip(I()), h = (new E).f("SHAPE", h), k = tc(), k = (new E).f("LABEL", k), r = EF(this), r = (new E).f("LABEL-COLOR", r), v = Kp(I()), v = (new E).f("BREED", v), C = Hp(I()), C = (new E).f("HIDDEN?", C), G = W(I()), G = (new E).f("SIZE", G), U = W(I()), U = (new E).f("PEN-SIZE", U), V = Ip(I()), V = (new E).f("USERID", V),
+                ba = Ip(I()), a = [a, c, d, e, f, h, k, r, v, C, G, U, V, (new E).f("PEN-MODE", ba)], c = lc(new mc, hf()), d = 0, e = a.length | 0; d < e;) pc(c, a[d]), d = 1 + d | 0;
         this.cU = c.Ia;
         this.a |= 4;
         a = W(I());
@@ -95813,16 +95813,17 @@
         k: 1,
         j: 1
     });
-
+    
     // hubnet-message-waiting?
     function KNad() {
-        jZ.call(this)
+        this.q = this.i = this.h = null;
+        this.a = 0
     }
-    KNad.prototype = new kZ;
+    KNad.prototype = new n;
     KNad.prototype.constructor = KNad;
     l = KNad.prototype;
     l.d = function() {
-        jZ.prototype.dq.call(this, Ip(I()), (new x).g([]));
+        M(this);
         return this
     };
     l.x = g("_hubnetmessagewaiting");
@@ -95830,17 +95831,55 @@
     l.p = function(a) {
         return fAb(a) && !0
     };
+    l.P = function(a) {
+        this.i = a;
+        this.a |= 2
+    };
     l.w = function(a) {
         throw (new T).c("" + a);
     };
     l.m = function() {
         return Z(V(), this)
     };
+    l.R = function(a) {
+        this.q = a;
+        this.a |= 4
+    };
+    l.H = function() {
+        var a = Hp(I()),
+            c = H();
+        I();
+        var d = yc();
+        I();
+        var e = y();
+        I();
+        var f = J();
+        I();
+        var h = J();
+        I();
+        I();
+        I();
+        var k = J();
+        I();
+        return K(new L, c, d, e, a, f, h, !1, "OTPL", k, k.ca())
+    };
+    l.L = function() {
+        if (0 === (1 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 628");
+        return this.h
+    };
+    l.N = function(a) {
+        this.h = a;
+        this.a |= 1
+    };
     l.s = function() {
         return Q(P(), this)
     };
     l.z = function() {
         return $(this)
+    };
+    l.Q = function() {
+        if (0 === (2 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 628");
+        return this.i
     };
 
     function fAb(a) {
@@ -95850,7 +95889,6 @@
         qNa: 0
     }, !1, "org.nlogo.core.prim.etc._hubnetmessagewaiting", {
         qNa: 1,
-        tr: 1,
         e: 1,
         ea: 1,
         E: 1,
@@ -95860,16 +95898,18 @@
         k: 1,
         j: 1
     });
-
+    
     // hubnet-enter-message?
     function KNae() {
-        jZ.call(this)
+        this.q = this.i = this.h = null;
+        this.a = 0
     }
-    KNae.prototype = new kZ;
+    KNae.prototype = new n;
     KNae.prototype.constructor = KNae;
+
     l = KNae.prototype;
     l.d = function() {
-        jZ.prototype.dq.call(this, Ip(I()), (new x).g([]));
+        M(this);
         return this
     };
     l.x = g("_hubnetentermessage");
@@ -95877,17 +95917,55 @@
     l.p = function(a) {
         return fAc(a) && !0
     };
+    l.P = function(a) {
+        this.i = a;
+        this.a |= 2
+    };
     l.w = function(a) {
         throw (new T).c("" + a);
     };
     l.m = function() {
         return Z(V(), this)
     };
+    l.R = function(a) {
+        this.q = a;
+        this.a |= 4
+    };
+    l.H = function() {
+        var a = Hp(I()),
+            c = H();
+        I();
+        var d = yc();
+        I();
+        var e = y();
+        I();
+        var f = J();
+        I();
+        var h = J();
+        I();
+        I();
+        I();
+        var k = J();
+        I();
+        return K(new L, c, d, e, a, f, h, !1, "OTPL", k, k.ca())
+    };
+    l.L = function() {
+        if (0 === (1 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 628");
+        return this.h
+    };
+    l.N = function(a) {
+        this.h = a;
+        this.a |= 1
+    };
     l.s = function() {
         return Q(P(), this)
     };
     l.z = function() {
         return $(this)
+    };
+    l.Q = function() {
+        if (0 === (2 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 628");
+        return this.i
     };
 
     function fAc(a) {
@@ -95897,7 +95975,6 @@
         qNb: 0
     }, !1, "org.nlogo.core.prim.etc._hubnetentermessage", {
         qNb: 1,
-        tr: 1,
         e: 1,
         ea: 1,
         E: 1,
@@ -95908,15 +95985,17 @@
         j: 1
     });
 
+
     // hubnet-exit-message?
     function KNaf() {
-        jZ.call(this)
+        this.q = this.i = this.h = null;
+        this.a = 0
     }
-    KNaf.prototype = new kZ;
+    KNaf.prototype = new n;
     KNaf.prototype.constructor = KNaf;
     l = KNaf.prototype;
     l.d = function() {
-        jZ.prototype.dq.call(this, Ip(I()), (new x).g([]));
+        M(this);
         return this
     };
     l.x = g("_hubnetexitmessage");
@@ -95924,17 +96003,55 @@
     l.p = function(a) {
         return fAd(a) && !0
     };
+    l.P = function(a) {
+        this.i = a;
+        this.a |= 2
+    };
     l.w = function(a) {
         throw (new T).c("" + a);
     };
     l.m = function() {
         return Z(V(), this)
     };
+    l.R = function(a) {
+        this.q = a;
+        this.a |= 4
+    };
+    l.H = function() {
+        var a = Hp(I()),
+            c = H();
+        I();
+        var d = yc();
+        I();
+        var e = y();
+        I();
+        var f = J();
+        I();
+        var h = J();
+        I();
+        I();
+        I();
+        var k = J();
+        I();
+        return K(new L, c, d, e, a, f, h, !1, "OTPL", k, k.ca())
+    };
+    l.L = function() {
+        if (0 === (1 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 628");
+        return this.h
+    };
+    l.N = function(a) {
+        this.h = a;
+        this.a |= 1
+    };
     l.s = function() {
         return Q(P(), this)
     };
     l.z = function() {
         return $(this)
+    };
+    l.Q = function() {
+        if (0 === (2 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 628");
+        return this.i
     };
 
     function fAd(a) {
@@ -95944,7 +96061,6 @@
         qNc: 0
     }, !1, "org.nlogo.core.prim.etc._hubnetexitmessage", {
         qNc: 1,
-        tr: 1,
         e: 1,
         ea: 1,
         E: 1,
@@ -96001,6 +96117,7 @@
         k: 1,
         j: 1
     });
+
 
     // hubnet-message-tag
     function KNah() {
