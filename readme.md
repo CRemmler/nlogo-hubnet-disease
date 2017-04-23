@@ -17,7 +17,9 @@
 - [x] hubnet-message-waiting?
 - [x] hubnet-exit-message?
 - [x] hubnet-enter-message?
-- [ ] hubnet-message
-- [ ] hubnet-message-source
-- [ ] hubnet-message-tag
+- [x] hubnet-message
+- [x] hubnet-message-source
+- [x] hubnet-message-tag
 
+## Add variable to turtle prototype
+- [x] userid

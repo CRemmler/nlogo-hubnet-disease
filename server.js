@@ -22,39 +22,39 @@ io.on('connection', function(socket){
 			socket.emit("display admin", {roomData: getRoomData()});
 			
 		} else {
-	    // declare myRoom
-	    socket.myRoom = data.room;
-	    var myRoom = socket.myRoom;
+			// declare myRoom
+			socket.myRoom = data.room;
+			var myRoom = socket.myRoom;
 			if (!roomData[myRoom]) {
 				roomData[myRoom] = {};
 				roomData[myRoom].teacherInRoom = false;
-	      roomData[myRoom].turtles = {};
+				roomData[myRoom].turtles = {};
 				roomData[myRoom].turtleDict = {};
 				roomData[myRoom].userIdDict = {};
 			}
 			
-	    // declare myUserType, first user in is a teacher, rest are students
+			// declare myUserType, first user in is a teacher, rest are students
 			socket.myUserType = (!roomData[myRoom].teacherInRoom) ? "teacher" : "student";
 			myUserType = socket.myUserType;
 			
-	    // declare myUserId
+			// declare myUserId
 			myUserId = socket.id;
 	    
 			// send settings to client
-	    socket.emit("save settings", {userType: myUserType, userId: myUserId});
+			socket.emit("save settings", {userType: myUserType, userId: myUserId});
 
-	    // join myRoom
+			// join myRoom
 			socket.join(myRoom+"-"+myUserType);
 			
-	    // tell client intro actions, dependent on myUserType
-	    socket.emit("display interface", {userType: socket.myUserType});
+			// tell client intro actions, dependent on myUserType
+			socket.emit("display interface", {userType: socket.myUserType});
 	    
 			if (myUserType === "teacher") {
-	      // remembet that there is already a teacher in room
+				// remembet that there is already a teacher in room
 				roomData[myRoom].teacherInRoom = true;
-	      roomData[myRoom].userIdDict["teacher"] = myUserId;
+				roomData[myRoom].userIdDict["teacher"] = myUserId;
 			} else {
-	      // send teacher a hubnet-enter-message
+				// send teacher a hubnet-enter-message
 				socket.to(myRoom+"-teacher").emit("execute command", {hubnetMessageSource: myUserId, hubnetMessageTag: "hubnet-enter-message", hubnetMessage: ""});
 			}
 		}
@@ -62,7 +62,7 @@ io.on('connection', function(socket){
   
 	// send only most recent updates of the world, in this room
   socket.on("update", function(data) {
-    var myRoom = socket.myRoom;
+		var myRoom = socket.myRoom;
 		var userId;
 		var turtleId;
 		var turtle;
@@ -76,7 +76,6 @@ io.on('connection', function(socket){
 
 			if (roomData[myRoom].turtles[turtleId] === undefined) {
 				//send world to new students
-				console.log("add new turtle to world");
 				userId = turtle.USERID;
 				roomData[myRoom].turtleDict[userId] = turtleId;
 				roomData[myRoom].userIdDict[turtleId] = userId;	
@@ -108,7 +107,7 @@ io.on('connection', function(socket){
 	}
 	
 	socket.on("send command", function(data) {
-    var myRoom = socket.myRoom;
+		var myRoom = socket.myRoom;
 		var myUserId = socket.id;
 		socket.to(myRoom+"-teacher").emit("execute command", {
 			hubnetMessageSource: myUserId,

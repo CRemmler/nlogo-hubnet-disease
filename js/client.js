@@ -43,7 +43,7 @@ jQuery(document).ready(function() {
 
   // student repaints most recent changes to world
   socket.on("send update", function(data) {
-    console.log("send update", data.turtles);
+    //console.log("send update", data.turtles);
     oliver.applyUpdate({turtles: data.turtles});
     oliver.repaint();
   });  
