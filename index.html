@@ -47133,10 +47133,15 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
 
 },{}],"engine/core/world/hubnetmanager":[function(require,module,exports){
 (function() {
+  
   var HubnetManager;
   var hubnetMessageWaiting = false;
   var hubnetEnterMessage = false;
   var hubnetExitMessage = false;
+  var hubnetMessage = "";
+  var hubnetMessageSource = "";
+  var hubnetMessageTag = "";
+  
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   module.exports = HubnetManager = (function() {
@@ -47150,6 +47155,12 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
       this._setHubnetEnterMessage = bind(this._setHubnetEnterMessage, this);
       this._getHubnetExitMessage = bind(this._getHubnetExitMessage, this);
       this._setHubnetExitMessage = bind(this._setHubnetExitMessage, this);
+      this._getHubnetMessage = bind(this._getHubnetMessage, this);
+      this._setHubnetMessage = bind(this._setHubnetMessage, this);
+      this._getHubnetMessageSource = bind(this._getHubnetMessageSource, this);
+      this._setHubnetMessageSource = bind(this._setHubnetMessageSource, this);
+      this._getHubnetMessageTag = bind(this._getHubnetMessageTag, this);
+      this._setHubnetMessageTag = bind(this._setHubnetMessageTag, this);
     }
     
     // Reporters
@@ -47170,6 +47181,24 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     };
     HubnetManager.prototype.setHubnetExitMessage = function(exitMessage) {
       hubnetExitMessage = exitMessage;
+    };
+    HubnetManager.prototype.getHubnetMessage = function() {
+      return hubnetMessage;
+    };
+    HubnetManager.prototype.setHubnetMessage = function(message) {
+      hubnetMessage = message;
+    };
+    HubnetManager.prototype.getHubnetMessageSource = function() {
+      return hubnetMessageSource;
+    };
+    HubnetManager.prototype.setHubnetMessageSource = function(messageSource) {
+      hubnetMessageSource = messageSource;
+    };
+    HubnetManager.prototype.getHubnetMessageTag = function() {
+      return hubnetMessageTag;
+    };
+    HubnetManager.prototype.setHubnetExitMessage = function(messageTag) {
+      hubnetMessageTag = messageTag;
     };
     
     // Commands

@@ -1,6 +1,3 @@
-## Try it out:
-https://nlogo-disease-dev.herokuapp.com/
-
 ## Features:
 - [x] Login to any room.
 - [x] First to enter gets room get teacher interface.
