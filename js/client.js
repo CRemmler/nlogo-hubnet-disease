@@ -35,7 +35,6 @@ jQuery(document).ready(function() {
     }
   });
   
-  
   // display admin interface
   socket.on("display admin", function(data) {
     $("#adminData").html(data.roomData);

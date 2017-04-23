@@ -81,10 +81,9 @@ io.on('connection', function(socket){
 				roomData[myRoom].userIdDict[turtleId] = userId;	
 				roomData[myRoom].turtles[turtleId] = turtle;
 				io.to(userId).emit("send update", {turtles: roomData[myRoom].turtles})
-			} else {
-				//send current updates to old students
-				socket.to(myRoom+"-student").emit("send update", {turtles: data.turtles});
-			}
+			} 
+			//send current updates to old students
+			socket.to(myRoom+"-student").emit("send update", {turtles: data.turtles});
 
 		}
   });
