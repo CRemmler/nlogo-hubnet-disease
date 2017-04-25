@@ -1573,7 +1573,6 @@ img.link-img {
     <div id="noRoomsChosen">
       Welcome!
       <p>Please enter a room name: <input id="roomString"><button id="submitRoomString">Go</button>
-      <p><span id="adminData"></span>
     </div>
     <div class="dark-overlay" id="loading-overlay">
   <div id="spinner">
@@ -47173,19 +47172,44 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     
     // Commands
     HubnetManager.prototype.hubnetFetchMessage = function() {
-      processMessage(messageQueue.shift());
-    };
-    HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
-      socket.emit("send reporter", {
-        hubnetMessageSource: messageSource, 
-        hubnetMessageTag: messageTag, 
-        hubnetMessage: message
-      });
+      processCommand(commandQueue.shift());
     };
     
-    var processMessage = function(m) {
-      //console.log(m.messageSource+" "+m.messageTag+" "+m.message);
-      if (messageQueue.length === 0) {
+    HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
+      var reporterObject = {};
+      reporterObject.hubnetMessageSource = messageSource;
+      reporterObject.hubnetMessageTag = messageTag;
+      reporterObject.hubnetMessage = message;
+      reporterQueue.push(reporterObject);
+      
+      processReporter(reporterQueue.shift());
+    };
+    
+    /*HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
+      addToQueue(messageSource, messageTag, message, shiftQueue);
+    };
+    var shiftQueue = function(reporterObject) {
+      processReporter(reporterObject);
+    }
+    var addToQueue = function(messageSource, messageTag, message, callback) {
+      var reporterObject = {};
+      reporterObject.hubnetMessageSource = messageSource;
+      reporterObject.hubnetMessageTag = messageTag;
+      reporterObject.hubnetMessage = message;
+      callback(reporterObject);
+    }*/
+    
+    var processReporter = function (m) {
+      socket.emit("send reporter", {
+        hubnetMessageSource: m.hubnetMessageSource, 
+        hubnetMessageTag: m.hubnetMessageTag, 
+        hubnetMessage: m.hubnetMessage
+      });
+    }
+    
+    var processCommand = function(m) {
+      console.log(m.messageSource+" "+m.messageTag+" "+m.message);
+      if (commandQueue.length === 0) {
         world.hubnetManager.setHubnetMessageWaiting(false);
       }
       world.hubnetManager.setHubnetEnterMessage(false);
@@ -57829,7 +57853,7 @@ into the sorting code and caused a 25% performance hit in BZ Benchmark. --JAB (4
           //console.log("from NLW", modelUpdate[k].turtles);
           socket.emit("update", {turtles: modelUpdate[k].turtles}); 
         }
-        oliver = this;
+        universe = this;
         this.applyUpdate(u);
       }
       return this.repaint();
@@ -59999,7 +60023,8 @@ breed [ students student ]  ;; created and controlled by the clients
 
 students-own
 [
-;;  user-id  ;; unique id, input by the client when they log in, to identify each student turtle
+;; unique id, input by the client when they log in, to identify each student turtle
+;; CR removed "user-id". Instead, turtles have a built-in user-id.
 ]
 
 
@@ -60008,7 +60033,7 @@ students-own
 ;;;;;;;;;;;;;;;;;;;;;;
 
 to startup
-;; CR hubnet-reset
+;; CR removed "hubnet-reset". It is un-needed.
 setup-vars
 setup-quick-start
 reset-ticks
@@ -60081,7 +60106,7 @@ to go
 ;; get commands and data from the clients
   listen-clients
 
-;; CR every 0.1
+;; CR removed "every 0.1".
 every 1
 [
 ;;allow the androids to wander around the view
@@ -60090,28 +60115,31 @@ if wander? [ androids-wander ]
 ask turtles with [ infected? ]
 [ spread-disease ]
 
+
 ;; keeps track of the number of times through the go procedure (if there is at least one turtle infected)
 ;; use an ifelse here to avoid redundant displays because tick forces a display.
 ;; we only want to keep track of time once the first turtle has been infected.
-;; CR ifelse count turtles with [infected?] > 0
-;; CR [ tick ]
-;; CR [ display ]
+  if count turtles with [infected?] > 0
+  [ tick ]
+;; CR removed "display". It is un-needed.
+;; [ display ]
 
 if count turtles with [infected?] > 0
 [ 
   tick 
   let n count turtles with [infected?]
-  ;;if n > num-infected-last-plotted 
-  ;;[
+  if n > num-infected-last-plotted 
+  [
     plotxy ticks - 1 n
     set num-infected-last-plotted n 
-  ;;]
+  ]
 ]
 
 ]
 end
 
 to go-0.25
+;; CR add a "go" button, that repeats every 0.25.
 listen-clients
 every 0.25 [
 ;;allow the androids to wander around the view
@@ -60319,7 +60347,8 @@ end
 
 to update-sick?-monitor
   ifelse show-sick-on-clients?
-  [ hubnet-send userid "Sick?" infected? ]
+  [ hubnet-send userid "Sick?" word infected? "" 
+  ]
   [ hubnet-send userid "Sick?" "N/A" ]
 end
 
@@ -60349,6 +60378,7 @@ to execute-move [new-heading]
 end
 
 to execute-change-turtle
+  show "execute-change-turtle"
   ask students with [userid = hubnet-message-source]
   [
     set used-shape-colors remove my-code used-shape-colors

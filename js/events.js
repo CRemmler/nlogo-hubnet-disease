@@ -5,12 +5,19 @@ jQuery(document).ready(function() {
     var myRoom = $("#roomString").val();
     socket.emit("enter room", {room: myRoom});
   });
-  
+    
   // when student clicks stepsize slider
   $("#netlogo-slider-26").click(function() {
     stepsize = +$("#netlogo-slider-26 .netlogo-slider-value input").val();
     socket.emit("send command", {hubnetMessageTag: "step-size", hubnetMessage: stepsize});
   });
+  
+  /* 
+  // button clicks could be generalized, if there is a check for student interface
+  $("button:not(.hidden) .netlogo-label").click(function() {
+    socket.emit("send command", {hubnetMessageTag: $(this).text(), hubnetMessage: ""});
+  });
+  */
   
   // when student pushes down button
   $("#netlogo-button-21").click(function() {

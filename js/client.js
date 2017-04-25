@@ -1,6 +1,7 @@
 var socket;
-var oliver;
-var messageQueue = [];
+var universe;
+var commandQueue = [];
+var reporterQueue = [];
 
 jQuery(document).ready(function() {
   var userId;
@@ -42,9 +43,8 @@ jQuery(document).ready(function() {
 
   // student repaints most recent changes to world
   socket.on("send update", function(data) {
-    //console.log("send update", data.turtles);
-    oliver.applyUpdate({turtles: data.turtles});
-    oliver.repaint();
+    universe.applyUpdate({turtles: data.turtles});
+    universe.repaint();
   });  
   
   // students display reporters
@@ -64,11 +64,11 @@ jQuery(document).ready(function() {
   
   // student execute commands
   socket.on("execute command", function(data) {
-    var messageObject = {};
-    messageObject.messageSource = data.hubnetMessageSource;
-    messageObject.messageTag = data.hubnetMessageTag;
-    messageObject.message = data.hubnetMessage;
-    messageQueue.push(messageObject);
+    var commandObject = {};
+    commandObject.messageSource = data.hubnetMessageSource;
+    commandObject.messageTag = data.hubnetMessageTag;
+    commandObject.message = data.hubnetMessage;
+    commandQueue.push(commandObject);
     world.hubnetManager.setHubnetMessageWaiting(true);
   });
   
