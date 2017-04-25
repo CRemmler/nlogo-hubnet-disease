@@ -23,3 +23,7 @@
 
 ## Add variable to turtle prototype
 - [x] userid
+
+## Known Issues
+- When you turn the "Go" button off, messages from the client accumulate.
+- Need to check on synchronous/asynchronous activity.
