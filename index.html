@@ -47176,36 +47176,12 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     };
     
     HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
-      var reporterObject = {};
-      reporterObject.hubnetMessageSource = messageSource;
-      reporterObject.hubnetMessageTag = messageTag;
-      reporterObject.hubnetMessage = message;
-      reporterQueue.push(reporterObject);
-      
-      processReporter(reporterQueue.shift());
-    };
-    
-    /*HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
-      addToQueue(messageSource, messageTag, message, shiftQueue);
-    };
-    var shiftQueue = function(reporterObject) {
-      processReporter(reporterObject);
-    }
-    var addToQueue = function(messageSource, messageTag, message, callback) {
-      var reporterObject = {};
-      reporterObject.hubnetMessageSource = messageSource;
-      reporterObject.hubnetMessageTag = messageTag;
-      reporterObject.hubnetMessage = message;
-      callback(reporterObject);
-    }*/
-    
-    var processReporter = function (m) {
       socket.emit("send reporter", {
-        hubnetMessageSource: m.hubnetMessageSource, 
-        hubnetMessageTag: m.hubnetMessageTag, 
-        hubnetMessage: m.hubnetMessage
+        hubnetMessageSource: messageSource, 
+        hubnetMessageTag: messageTag, 
+        hubnetMessage: message
       });
-    }
+    };
     
     var processCommand = function(m) {
       console.log(m.messageSource+" "+m.messageTag+" "+m.message);
