@@ -1,58 +1,94 @@
 Interface = (function() {
 
-  function displayLoginInterface() {
-    $("#netlogo-model-container").addClass("hidden");
-    $("#noRoomsChosen").removeClass("hidden");
+  //////////////////////////////////////////
+  // DISEASE - Client Buttons and Sliders //
+  //////////////////////////////////////////
+  // items are NetLogo interface components like button, slider...
+  var itemId = {
+    "teacherItems": 0,    // teacher items have id's from 0-20
+    "studentItems": 21,   // student items have id's from 21-29
+    "loginItems": 30,     // login items have id's from 30-42
+    "totalItems": 43
   }
+  var createRoomButton = "32";
+  var createRoomInput = "30";
+  /////////
+  // END //
+  /////////
+
+  var items = {};
   
-  function displayDisconnectedInterface() {
-    $("#netlogo-model-container").addClass("hidden");
-    $("#noRoomsChosen").removeClass("hidden");
-    $("#noRoomsChosen").html("You have been disconnected. Please refresh the page to continue.");
+  function displayLoginInterface(rooms) {
+    setupItems();
+    $(".netlogo-tab-area").addClass("hidden");
+    $(".netlogo-export-wrapper").addClass("hidden");    
+    $(".netlogo-speed-slider").css("display","none");
+    $(".admin-body").css("display","inline");
+    showItems(itemId.loginItems,itemId.totalItems);
+    
+    $("#netlogo-button-"+createRoomButton).addClass("create-room-button");
+    $(".netlogo-button:not(.hidden):not(.create-room-button)").addClass("join-room-button");
+    $("#netlogo-inputBox-30 textarea").addClass("create-room-input");
+    $(".join-room-button").addClass("hidden");
+    
+    console.log(rooms);
+    var roomButtonHtml, roomButtonId;
+    for (var i=0; i<rooms.length; i++) {
+      console.log("add "+itemId.loginItems+ " 3 " + i);
+      roomButtonHtml = "<div class='netlogo-button-agent-context'>"+
+        "<span class='netlogo-label'>"+rooms[i]+"</span></div>";
+      roomButtonId = "#netlogo-button-"+(itemId.loginItems+3+i);
+      console.log(roomButtonHtml);
+      console.log(roomButtonId);
+      $(roomButtonId).html(roomButtonHtml);
+      $(roomButtonId).removeClass("hidden");
+    }
   }
 
   function displayTeacherInterface() {
-    $("#netlogo-button-21").addClass("hidden");
-    $("#netlogo-button-22").addClass("hidden");
-    $("#netlogo-button-23").addClass("hidden");
-    $("#netlogo-button-24").addClass("hidden");
-    $("#netlogo-button-25").addClass("hidden");
-    $("#netlogo-slider-26").addClass("hidden");
-    $("#netlogo-monitor-27").addClass("hidden");
-    $("#netlogo-monitor-28").addClass("hidden");
-    $("#netlogo-monitor-29").addClass("hidden");
-    $("#netlogo-model-container").removeClass("hidden");
-    $("#noRoomsChosen").addClass("hidden");
-    $("#netlogo-inputBox-30").addClass("hidden");
+    showItems(itemId.teacherItems, itemId.studentItems);
+    $(".netlogo-view-container").removeClass("hidden");
+    $(".netlogo-tab-area").removeClass("hidden");
+    $(".admin-body").css("display","none");
   }
   
   function displayStudentInterface() {
-    $("#netlogo-model-container").removeClass("hidden");
-    $("#noRoomsChosen").addClass("hidden");
-    $(".netlogo-widget").addClass("hidden");
-    $(".netlogo-widget-error").removeClass("hidden");
-    $("#netlogo-button-21").removeClass("hidden");
-    $("#netlogo-button-22").removeClass("hidden");
-    $("#netlogo-button-23").removeClass("hidden");
-    $("#netlogo-button-24").removeClass("hidden");
-    $("#netlogo-button-25").removeClass("hidden");
-    $("#netlogo-slider-26").removeClass("hidden");
-    $("#netlogo-monitor-27").removeClass("hidden");
-    $("#netlogo-monitor-28").removeClass("hidden");
-    $("#netlogo-monitor-29").removeClass("hidden");
+    showItems(itemId.studentItems, itemId.loginItems);
     $(".netlogo-view-container").removeClass("hidden");
-    $(".netlogo-view-container").css("top","10px");
-    $(".netlogo-tab-area").addClass("hidden");
-    $(".netlogo-export-wrapper").addClass("hidden");
-    $("#netlogo-monitor-30").removeClass("hidden");
-    $("#netlogo-monitor-31").removeClass("hidden");
-    $("#netlogo-monitor-32").removeClass("hidden");
-    $("#netlogo-inputBox-30").addClass("hidden");
+    $(".admin-body").css("display","none");
+    $(".netlogo-button:not(.hidden)").addClass("student-button");
+  }
+  
+  function displayDisconnectedInterface() {
+    $(".admin-body").css("display","inline");
+    $(".admin-body").html("You have been disconnected. Please refresh the page to continue.");
   }
 
   function clearRoom(roomName) {
     socket.emit("clear room", {roomName: roomName});
-    $("#submitRoomString").trigger("click");
+    //$("#submitRoomString").trigger("click");
+  }
+  
+  function setupItems() {
+    var key, value, id;
+    $(".netlogo-widget").each(function() {
+      id = $(this).attr("id");
+      if (id) { 
+        key = parseInt(id.replace(/\D/g,''));
+        if (key) {
+          value = id;
+          items[key] = value;
+        }
+      }
+    });
+  }
+
+  function showItems(min, max) {
+    $(".netlogo-widget").addClass("hidden");
+    $(".netlogo-model-title").removeClass("hidden");
+    for (var i=min; i<max; i++) {
+      $("#"+items[i]).removeClass("hidden");
+    }
   }
 
   return {

@@ -3,6 +3,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var express = require('express');
 const PORT = process.env.PORT || 3000;
+var myTimer;
 
 var roomData = {};
 
@@ -14,48 +15,79 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
 	
+	var rooms = [];
+	for (var key in roomData) { rooms.push(key); }
+	socket.emit("display interface", {userType: "login", rooms: rooms});
+	
+	function enableTimer() {
+		console.log("enable");
+		var myTimer = setInterval(function() {
+			for (var key in roomData) {
+				if (socket) {
+					socket.to(key+"-student").emit("send update", {turtles: roomData[key].turtles});	
+				}
+			}
+		}, 250);
+	}
+
+	function disableTimer() {
+		console.log("disable");
+		clearInterval(myTimer);
+	}
+	
 	// user enters room
 	socket.on("enter room", function(data) {
 		var myUserType, myUserId, myTurtleId;
 		
-		// declare myRoom
-		socket.myRoom = data.room;
-		var myRoom = socket.myRoom;
-		if (!roomData[myRoom]) {
-			roomData[myRoom] = {};
-			roomData[myRoom].teacherInRoom = false;
-			roomData[myRoom].turtles = {};
-			roomData[myRoom].turtleDict = {};
-			roomData[myRoom].userIdDict = {};
-		}
-		
-		// declare myUserType, first user in is a teacher, rest are students
-		socket.myUserType = (!roomData[myRoom].teacherInRoom) ? "teacher" : "student";
-		myUserType = socket.myUserType;
-		
-		// declare myUserId
-		myUserId = socket.id;
-    
-		// send settings to client
-		socket.emit("save settings", {userType: myUserType, userId: myUserId});
-
-		// join myRoom
-		socket.join(myRoom+"-"+myUserType);
-		
-		// tell teacher or student to display their interface
-		socket.emit("display interface", {userType: socket.myUserType});
-    
-		if (myUserType === "teacher") {
-			// remembet that there is already a teacher in room
-			roomData[myRoom].teacherInRoom = true;
-			roomData[myRoom].userIdDict["teacher"] = myUserId;
+		if (data.room === "admin") {
+			socket.emit("display admin", {roomData: getRoomData()});
+			
 		} else {
-			// send teacher a hubnet-enter-message
-			socket.to(myRoom+"-teacher").emit("execute command", {hubnetMessageSource: myUserId, hubnetMessageTag: "hubnet-enter-message", hubnetMessage: ""});
+		
+			// if user is first to enter a room, and only one room exists, then enable the timer
+			if (Object.keys(roomData).length === 0) { enableTimer(); }
+			
+			// declare myRoom
+			socket.myRoom = data.room;
+			var myRoom = socket.myRoom;
+				
+			if (!roomData[myRoom]) {
+				roomData[myRoom] = {};
+				roomData[myRoom].teacherInRoom = false;
+				roomData[myRoom].turtles = {};
+				roomData[myRoom].turtleDict = {};
+				roomData[myRoom].userIdDict = {};
+				//roomData[myRoom].updateTurtles = {};
+			}
+			
+			// declare myUserType, first user in is a teacher, rest are students
+			socket.myUserType = (!roomData[myRoom].teacherInRoom) ? "teacher" : "student";
+			myUserType = socket.myUserType;
+			
+			// declare myUserId
+			myUserId = socket.id;
+	    
+			// send settings to client
+			socket.emit("save settings", {userType: myUserType, userId: myUserId});
+
+			// join myRoom
+			socket.join(myRoom+"-"+myUserType);
+			
+			// tell teacher or student to display their interface
+			socket.emit("display interface", {userType: socket.myUserType});
+	    
+			if (myUserType === "teacher") {
+				// remember that there is already a teacher in room
+				roomData[myRoom].teacherInRoom = true;
+				roomData[myRoom].userIdDict["teacher"] = myUserId;
+			} else {
+				// send teacher a hubnet-enter-message
+				socket.to(myRoom+"-teacher").emit("execute command", {hubnetMessageSource: myUserId, hubnetMessageTag: "hubnet-enter-message", hubnetMessage: ""});
+			}
 		}
 	});	
   
-	// send only most recent updates of the world, in this room
+	// store updates to world
   socket.on("update", function(data) {
 		var myRoom = socket.myRoom;
 		var userId;
@@ -63,27 +95,28 @@ io.on('connection', function(socket){
 		var turtle;
 		var reporterTurtle;
 		
-		// send update to each student
 		for (var key in data.turtles) 
 		{
 			turtle = data.turtles[key];
 			turtleId = key;
 			if (roomData[myRoom].turtles[turtleId] === undefined) {
-				//send world to new students
+				// save userId and turtleId in dicts, for new student
 				userId = turtle.USERID;
 				roomData[myRoom].turtleDict[userId] = turtleId;
 				roomData[myRoom].userIdDict[turtleId] = userId;	
-				roomData[myRoom].turtles[turtleId] = turtle;
-				io.to(userId).emit("send update", {turtles: roomData[myRoom].turtles})
+				roomData[myRoom].turtles[turtleId] = {};
 			} 
-			//send current updates to old students
-			socket.to(myRoom+"-student").emit("send update", {turtles: data.turtles});
-
+			if (Object.keys(turtle).length > 0) {
+				for (var attribute in turtle) {
+					roomData[myRoom].turtles[turtleId][attribute] = turtle[attribute];
+				}
+			}
 		}
   });
 	
 	// pass command from student to teacher
 	socket.on("send command", function(data) {
+		console.log(data.hubnetMessageTag+" "+data.hubnetMessage);
 		var myRoom = socket.myRoom;
 		var myUserId = socket.id;
 		socket.to(myRoom+"-teacher").emit("execute command", {
@@ -114,11 +147,14 @@ io.on('connection', function(socket){
 	
 	// user exits 
 	socket.on('disconnect', function () {
+		//clearInterval(myTimer);
 		var myRoom = socket.myRoom;
 		var myTurtleId = socket.myTurtleId;
 		var myUserId = socket.id;
 		if (socket.myUserType === "teacher") {
 			clearRoom(myRoom);
+			delete roomData[myRoom];
+			disableTimer();
 		} else {
 			if (roomData[myRoom] != undefined) {
 				var myTurtleId = roomData[myRoom].turtleDict[myUserId];
@@ -132,6 +168,10 @@ io.on('connection', function(socket){
 					hubnetMessage: ""
 				});
 				delete roomData[myRoom].turtles[myTurtleId];
+				if (roomData[myRoom].turtles === {}) {
+					delete roomData[myRoom];
+				}
+				if (Object.keys(roomData).length === 0) { disableTimer();}
 			}
 		}
 	});	
@@ -154,6 +194,28 @@ function clearRoom(roomName) {
 				io.sockets.sockets[clientList[i]].disconnect();
 			}
 		}
-		delete roomData[myRoom];
 	}
+}
+
+function getRoomData() {
+	var displayData = "";
+	var buttonAction;
+		displayData = displayData + "<hr>Any rooms?";
+	for (var roomKey in roomData) {
+		displayData = displayData + "<hr>Which room? " + roomKey;
+		displayData = displayData + "<br> Is there a teacher? ";
+		displayData = roomData[roomKey].teacherInRoom ? displayData + " yes": displayData + " no";
+		displayData = displayData + "<br> Students?";
+		if (roomData[roomKey].turtles != {}) {
+			for (var turtleKey in roomData[roomKey].turtles) {
+				var turtle = roomData[roomKey].turtles[turtleKey];
+				if ((turtle.WHO != "-1") && (turtle.BREED === "STUDENTS")) {
+					displayData = displayData + "<br>";
+					displayData = displayData + "Turtle " + turtle.WHO + " with userId " + turtle.USERID;
+				}
+			}
+		}
+		displayData = displayData + "<br><button onclick=Interface.clearRoom('"+roomKey+"')>Clear Room</button>";
+	}
+	return displayData;
 }

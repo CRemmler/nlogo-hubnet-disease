@@ -1,7 +1,7 @@
 var socket;
 var universe;
-var commandQueue = [];
-var reporterQueue = [];
+//var commandQueue = [];
+//var reporterQueue = [];
 
 jQuery(document).ready(function() {
   var userId;
@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
   socket = io();
 
   // show first screen, ask user to enter room
-  Interface.showLogin();
+  //Interface.showLogin();
 
   // save student settings
   socket.on("save settings", function(data) {
@@ -28,7 +28,7 @@ jQuery(document).ready(function() {
         Interface.showStudent();
         break;
       case "login":
-        Interface.showLogin();
+        Interface.showLogin(data.rooms);
         break;
       case "disconnected":
         Interface.showDisconnected();
@@ -38,17 +38,23 @@ jQuery(document).ready(function() {
   
   // display admin interface
   socket.on("display admin", function(data) {
-    $("#adminData").html(data.roomData);
+    Interface.showAdmin(data.roomData);
   });
 
   // student repaints most recent changes to world
   socket.on("send update", function(data) {
+    //console.log("get update ", data.turtles);
     universe.applyUpdate({turtles: data.turtles});
     universe.repaint();
   });  
   
+  socket.on("display admin", function(data) {
+    $("#adminData").html(data.roomData);
+  });
+  
   // students display reporters
   socket.on("display reporter", function(data) {
+    //console.log("display reporter", data);
     switch (data.hubnetMessageTag) {
       case "You are a:":
         $("#netlogo-monitor-27 output").html(data.hubnetMessage);
@@ -62,19 +68,14 @@ jQuery(document).ready(function() {
     }
   });
   
-  // student execute commands
   socket.on("execute command", function(data) {
-    var commandObject = {};
-    commandObject.messageSource = data.hubnetMessageSource;
-    commandObject.messageTag = data.hubnetMessageTag;
-    commandObject.message = data.hubnetMessage;
-    commandQueue.push(commandObject);
-    world.hubnetManager.setHubnetMessageWaiting(true);
+    var messagePackage = [data.hubnetMessageSource, data.hubnetMessageTag, data.hubnetMessage];
+    world.hubnetManager.addToHubnetMessageList(messagePackage);
   });
   
   // student leaves activity and sees login page
   socket.on("teacher disconnect", function(data) {
-    Interface.showLogin();
+    Interface.showDisconnected();
   });
   
 });

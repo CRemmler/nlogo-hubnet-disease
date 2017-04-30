@@ -1570,9 +1570,8 @@ img.link-img {
 </style>
   </head>
   <body style="margin: 0px;">
-    <div id="noRoomsChosen">
-      Welcome!
-      <p>Please enter a room name: <input id="roomString"><button id="submitRoomString">Go</button>
+    <div class="admin-body">
+      <p><span id="adminData"></span>
     </div>
     <div class="dark-overlay" id="loading-overlay">
   <div id="spinner">
@@ -1642,7 +1641,7 @@ img.link-img {
     </div>
 </div>
 
-    <div id="netlogo-model-container" style="display: inline-block;"></div>
+    <div id="netlogo-model-container" style="display: inline-block; padding:10px"></div>
     <script type="text/javascript" src="js/tortoiseCompiler.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
   	<script type="text/javascript" src="js/client.js"></script>
@@ -42597,21 +42596,6 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
     return (n * 10) + 5;
   })(rangeUntil(0)(ColorMax / 10));
 
-/*  
-  BaseColors = (function() {
-    console.log("SOMETHING");
-    return "cat";
-  })(); 
-*/
-/*
-  BaseColors = (function() {
-    cats = function() {
-      console.log('wassup');
-    }
-    return cats;
-  })();
-*/
-
   NamesToIndicesMap = (function() {
     var color, i, j, len, ref1, temp;
     temp = {};
@@ -47104,77 +47088,32 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
 (function() {
   
   var HubnetManager;
-  var hubnetMessageWaiting = false;
-  var hubnetEnterMessage = false;
-  var hubnetExitMessage = false;
-  var hubnetMessage = "";
-  var hubnetMessageSource = "";
-  var hubnetMessageTag = "";
+  var hubnetMessageList = [];
   
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   module.exports = HubnetManager = (function() {
     
     function HubnetManager() {
-      this._hubnetFetchMessage = bind(this._hubnetFetchMessage, this);
       this._hubnetSend = bind(this._hubnetSend, this);
-      this._getHubnetMessageWaiting = bind(this._getHubnetMessageWaiting, this);
-      this._setHubnetMessageWaiting = bind(this._setHubnetMessageWaiting, this);
-      this._getHubnetEnterMessage = bind(this._getHubnetEnterMessage, this);
-      this._setHubnetEnterMessage = bind(this._setHubnetEnterMessage, this);
-      this._getHubnetExitMessage = bind(this._getHubnetExitMessage, this);
-      this._setHubnetExitMessage = bind(this._setHubnetExitMessage, this);
-      this._getHubnetMessage = bind(this._getHubnetMessage, this);
-      this._setHubnetMessage = bind(this._setHubnetMessage, this);
-      this._getHubnetMessageSource = bind(this._getHubnetMessageSource, this);
-      this._setHubnetMessageSource = bind(this._setHubnetMessageSource, this);
-      this._getHubnetMessageTag = bind(this._getHubnetMessageTag, this);
-      this._setHubnetMessageTag = bind(this._setHubnetMessageTag, this);
+      this._hubnetClearMessage = bind(this._hubnetClearMessage, this);
+      this._getHubnetMessageList = bind(this._getHubnetMessageList, this);
+      this._setHubnetMessageList = bind(this._setHubnetMessageList, this);
+      this._addToHubnetMessageList = bind(this._addToHubnetMessageList, this);
     }
     
     // Reporters
-    HubnetManager.prototype.getHubnetMessageWaiting = function() {
-      return hubnetMessageWaiting;
+    HubnetManager.prototype.getHubnetMessageList = function() {
+      return hubnetMessageList;
     };
-    HubnetManager.prototype.setHubnetMessageWaiting = function(messageWaiting) {
-      hubnetMessageWaiting = messageWaiting;
+    HubnetManager.prototype.setHubnetMessageList = function(messageList) {
+      hubnetMessageList = messageList;
     };
-    HubnetManager.prototype.getHubnetEnterMessage = function() {
-      return hubnetEnterMessage;
-    };
-    HubnetManager.prototype.setHubnetEnterMessage = function(enterMessage) {
-      hubnetEnterMessage = enterMessage;
-    };
-    HubnetManager.prototype.getHubnetExitMessage = function() {
-      return hubnetExitMessage;
-    };
-    HubnetManager.prototype.setHubnetExitMessage = function(exitMessage) {
-      hubnetExitMessage = exitMessage;
-    };
-    HubnetManager.prototype.getHubnetMessage = function() {
-      return hubnetMessage;
-    };
-    HubnetManager.prototype.setHubnetMessage = function(message) {
-      hubnetMessage = message;
-    };
-    HubnetManager.prototype.getHubnetMessageSource = function() {
-      return hubnetMessageSource;
-    };
-    HubnetManager.prototype.setHubnetMessageSource = function(messageSource) {
-      hubnetMessageSource = messageSource;
-    };
-    HubnetManager.prototype.getHubnetMessageTag = function() {
-      return hubnetMessageTag;
-    };
-    HubnetManager.prototype.setHubnetMessageTag = function(messageTag) {
-      hubnetMessageTag = messageTag;
+    HubnetManager.prototype.addToHubnetMessageList = function(messagePackage) {
+      hubnetMessageList.push(messagePackage);
     };
     
     // Commands
-    HubnetManager.prototype.hubnetFetchMessage = function() {
-      processCommand(commandQueue.shift());
-    };
-    
     HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
       socket.emit("send reporter", {
         hubnetMessageSource: messageSource, 
@@ -47183,23 +47122,9 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
       });
     };
     
-    var processCommand = function(m) {
-      console.log(m.messageSource+" "+m.messageTag+" "+m.message);
-      if (commandQueue.length === 0) {
-        world.hubnetManager.setHubnetMessageWaiting(false);
-      }
-      world.hubnetManager.setHubnetEnterMessage(false);
-      world.hubnetManager.setHubnetExitMessage(false);
-      world.hubnetManager.setHubnetMessageSource(m.messageSource);
-      world.hubnetManager.setHubnetMessageTag(m.messageTag);
-      world.hubnetManager.setHubnetMessage(m.message);
-      if (m.messageTag === "hubnet-enter-message") {
-        world.hubnetManager.setHubnetEnterMessage(true);
-      }
-      if (m.messageTag === "hubnet-exit-message") {
-        world.hubnetManager.setHubnetExitMessage(true);
-      }
-    }
+    HubnetManager.prototype.hubnetClearMessage = function() {
+      hubnetMessageList.pop();
+    };
     
     return HubnetManager;
     
@@ -52533,7 +52458,7 @@ into the sorting code and caused a 25% performance hit in BZ Benchmark. --JAB (4
 
   commands = ['__bench', '__change-topology', '__done', '__experimentstepend', '__export-drawing', '__foreverbuttonend', '__ignore', '__let', '__linkcode', '__make-preview', '__mkdir', '__observercode', '__patchcode', '__plot-pen-hide', '__plot-pen-show', '__pwd', '__reload-extensions', '__set-line-thickness', '__stderr', '__stdout', '__thunk-did-finish', '__turtlecode', 'ask', 'ask-concurrent', 'auto-plot-off', 'auto-plot-on', 'back', 'beep', 'bk', 'ca', 'carefully', 'cd', 'clear-all', 'clear-all-plots', 'clear-drawing', 'clear-globals', 'clear-links', 'clear-output', 'clear-patches', 'clear-plot', 'clear-ticks', 'clear-turtles', 'cp', 'create-link-from', 'create-link-to', 'create-link-with', 'create-links-from', 'create-links-to', 'create-links-with', 'create-ordered-turtles', 'create-temporary-plot-pen', 'create-turtles', 'cro', 'crt', 'ct', 'die', 'diffuse', 'diffuse4', 'display', 'downhill', 'downhill4', 'error', 'every', 'export-all-plots', 'export-interface', 'export-output', 'export-plot', 'export-view', 'export-world', 'face', 'facexy', 'fd', 'file-close', 'file-close-all', 'file-delete', 'file-flush', 'file-open', 'file-print', 'file-show', 'file-type', 'file-write', 'follow', 'follow-me', 'foreach', 'forward', 'hatch', 'hide-link', 'hide-turtle', 'histogram', 'home', 'ht', 'hubnet-fetch-message', 'hubnet-send', 'if', 'if-else', 'ifelse', 'import-drawing', 'import-pcolors', 'import-pcolors-rgb', 'import-world', 'inspect', 'jump', 'layout-circle', 'layout-radial', 'layout-spring', 'layout-tutte', 'left', 'let', 'loop', 'lt', 'move-to', 'no-display', 'output-print', 'output-show', 'output-type', 'output-write', 'pd', 'pe', 'pen-down', 'pen-erase', 'pen-up', 'pendown', 'penup', 'plot', 'plot-pen-down', 'plot-pen-reset', 'plot-pen-up', 'plotxy', 'print', 'pu', 'random-seed', 'repeat', 'report', 'reset-perspective', 'reset-ticks', 'reset-timer', 'resize-world', 'ride', 'ride-me', 'right', 'rp', 'rt', 'run', 'set', 'set-current-directory', 'set-current-plot', 'set-current-plot-pen', 'set-default-shape', 'set-histogram-num-bars', 'set-patch-size', 'set-plot-pen-color', 'set-plot-pen-interval', 'set-plot-pen-mode', 'set-plot-x-range', 'set-plot-y-range', 'setup-plots', 'setxy', 'show', 'show-link', 'show-turtle', 'sprout', 'st', 'stamp', 'stamp-erase', 'stop', 'tick', 'tick-advance', 'tie', 'type', 'untie', 'update-plots', 'uphill', 'uphill4', 'user-message', 'wait', 'watch', 'watch-me', 'while', 'with-local-randomness', 'without-interruption', 'write'].reverse();
 
-  reporters = ['!=', '\\*', '\\+', '-', '/', '<', '<=', '=', '>', '>=', '\\^', '__boom', '__check-syntax', '__dump', '__dump-extension-prims', '__dump-extensions', '__dump1', '__hubnet-in-q-size', '__hubnet-out-q-size', '__nano-time', '__patchcol', '__patchrow', '__processors', '__random-state', '__stack-trace', '__to-string', 'abs', 'acos', 'all\\?', 'and', 'any\\?', 'approximate-hsb', 'approximate-rgb', 'asin', 'at-points', 'atan', 'autoplot\\?', 'base-color', 'behaviorspace-run-number', 'bf', 'bl', 'both-ends', 'but-first', 'but-last', 'butfirst', 'butlast', 'can-move\\?', 'ceiling', 'cos', 'count', 'date-and-time', 'distance', 'distance-nowrap', 'distancexy', 'distancexy-nowrap', 'dx', 'dy', 'empty\\?', 'end1', 'end2', 'error-message', 'exp', 'extract-hsb', 'extract-rgb', 'file-at-end\\?', 'file-exists\\?', 'file-read', 'file-read-characters', 'file-read-line', 'filter', 'first', 'floor', 'fput', 'hsb', 'hubnet-clients-list', 'hubnet-enter-message\\?', 'hubnet-exit-message\\?', 'hubnet-message', 'hubnet-message-source', 'hubnet-message-tag', 'hubnet-message-waiting\\?', 'ifelse-value', 'in-cone', 'in-cone-nowrap', 'in-link-from', 'in-link-neighbor\\?', 'in-link-neighbors', 'in-radius', 'in-radius-nowrap', 'int', 'is-agent\\?', 'is-agentset\\?', 'is-boolean\\?', 'is-command-task\\?', 'is-directed-link\\?', 'is-link-set\\?', 'is-link\\?', 'is-list\\?', 'is-number\\?', 'is-patch-set\\?', 'is-patch\\?', 'is-reporter-task\\?', 'is-string\\?', 'is-turtle-set\\?', 'is-turtle\\?', 'is-undirected-link\\?', 'item', 'last', 'length', 'link', 'link-heading', 'link-length', 'link-neighbor\\?', 'link-neighbors', 'link-set', 'link-shapes', 'link-with', 'links', 'list', 'ln', 'log', 'lput', 'map', 'max', 'max-n-of', 'max-one-of', 'max-pxcor', 'max-pycor', 'mean', 'median', 'member\\?', 'min', 'min-n-of', 'min-one-of', 'min-pxcor', 'min-pycor', 'mod', 'modes', 'mouse-down\\?', 'mouse-inside\\?', 'mouse-xcor', 'mouse-ycor', 'movie-status', 'my-in-links', 'my-links', 'my-out-links', 'myself', 'n-of', 'n-values', 'neighbors', 'neighbors4', 'netlogo-applet\\?', 'netlogo-version', 'netlogo-web\\?', 'new-seed', 'no-links', 'no-patches', 'no-turtles', 'not', 'of', 'one-of', 'or', 'other', 'other-end', 'out-link-neighbor\\?', 'out-link-neighbors', 'out-link-to', 'patch', 'patch-ahead', 'patch-at', 'patch-at-heading-and-distance', 'patch-here', 'patch-left-and-ahead', 'patch-right-and-ahead', 'patch-set', 'patch-size', 'patches', 'plot-name', 'plot-pen-exists\\?', 'plot-x-max', 'plot-x-min', 'plot-y-max', 'plot-y-min', 'position', 'precision', 'random', 'random-exponential', 'random-float', 'random-gamma', 'random-normal', 'random-or-random-float', 'random-poisson', 'random-pxcor', 'random-pycor', 'random-xcor', 'random-ycor', 'read-from-string', 'reduce', 'remainder', 'remove', 'remove-duplicates', 'remove-item', 'replace-item', 'reverse', 'rgb', 'round', 'run-result', 'runresult', 'scale-color', 'se', 'self', 'sentence', 'shade-of\\?', 'shapes', 'shuffle', 'sin', 'sort', 'sort-by', 'sort-on', 'sqrt', 'standard-deviation', 'subject', 'sublist', 'substring', 'subtract-headings', 'sum', 'tan', 'task', 'ticks', 'timer', 'towards', 'towards-nowrap', 'towardsxy', 'towardsxy-nowrap', 'turtle', 'turtle-set', 'turtles', 'turtles-at', 'turtles-here', 'turtles-on', 'user-directory', 'user-file', 'user-input', 'user-new-file', 'user-one-of', 'user-yes-or-no\\?', 'value-from', 'values-from', 'variance', 'with', 'with-max', 'with-min', 'word', 'world-height', 'world-width', 'wrap-color', 'xor', 'WHO', 'COLOR', 'HEADING', 'XCOR', 'YCOR', 'SHAPE', 'LABEL', 'LABEL-COLOR', 'BREED', 'HIDDEN\\?', 'SIZE', 'PEN-SIZE', 'PEN-MODE', 'PXCOR', 'PYCOR', 'PCOLOR', 'PLABEL', 'PLABEL-COLOR', 'END1', 'END2', 'COLOR', 'LABEL', 'LABEL-COLOR', 'HIDDEN\\?', 'BREED', 'THICKNESS', 'SHAPE', 'TIE-MODE', 'USERID', 'INFECTED', 'BASESHAPE'].reverse();
+  reporters = ['!=', '\\*', '\\+', '-', '/', '<', '<=', '=', '>', '>=', '\\^', '__boom', '__check-syntax', '__dump', '__dump-extension-prims', '__dump-extensions', '__dump1', '__hubnet-in-q-size', '__hubnet-out-q-size', '__nano-time', '__patchcol', '__patchrow', '__processors', '__random-state', '__stack-trace', '__to-string', 'abs', 'acos', 'all\\?', 'and', 'any\\?', 'approximate-hsb', 'approximate-rgb', 'asin', 'at-points', 'atan', 'autoplot\\?', 'base-color', 'behaviorspace-run-number', 'bf', 'bl', 'both-ends', 'but-first', 'but-last', 'butfirst', 'butlast', 'can-move\\?', 'ceiling', 'cos', 'count', 'date-and-time', 'distance', 'distance-nowrap', 'distancexy', 'distancexy-nowrap', 'dx', 'dy', 'empty\\?', 'end1', 'end2', 'error-message', 'exp', 'extract-hsb', 'extract-rgb', 'file-at-end\\?', 'file-exists\\?', 'file-read', 'file-read-characters', 'file-read-line', 'filter', 'first', 'floor', 'fput', 'hsb', 'hubnet-clients-list', 'hubnet-enter-message\\?', 'hubnet-exit-message\\?', 'hubnet-message', 'hubnet-message-list', 'hubnet-message-source', 'hubnet-message-tag', 'hubnet-message-waiting\\?', 'ifelse-value', 'in-cone', 'in-cone-nowrap', 'in-link-from', 'in-link-neighbor\\?', 'in-link-neighbors', 'in-radius', 'in-radius-nowrap', 'int', 'is-agent\\?', 'is-agentset\\?', 'is-boolean\\?', 'is-command-task\\?', 'is-directed-link\\?', 'is-link-set\\?', 'is-link\\?', 'is-list\\?', 'is-number\\?', 'is-patch-set\\?', 'is-patch\\?', 'is-reporter-task\\?', 'is-string\\?', 'is-turtle-set\\?', 'is-turtle\\?', 'is-undirected-link\\?', 'item', 'last', 'length', 'link', 'link-heading', 'link-length', 'link-neighbor\\?', 'link-neighbors', 'link-set', 'link-shapes', 'link-with', 'links', 'list', 'ln', 'log', 'lput', 'map', 'max', 'max-n-of', 'max-one-of', 'max-pxcor', 'max-pycor', 'mean', 'median', 'member\\?', 'min', 'min-n-of', 'min-one-of', 'min-pxcor', 'min-pycor', 'mod', 'modes', 'mouse-down\\?', 'mouse-inside\\?', 'mouse-xcor', 'mouse-ycor', 'movie-status', 'my-in-links', 'my-links', 'my-out-links', 'myself', 'n-of', 'n-values', 'neighbors', 'neighbors4', 'netlogo-applet\\?', 'netlogo-version', 'netlogo-web\\?', 'new-seed', 'no-links', 'no-patches', 'no-turtles', 'not', 'of', 'one-of', 'or', 'other', 'other-end', 'out-link-neighbor\\?', 'out-link-neighbors', 'out-link-to', 'patch', 'patch-ahead', 'patch-at', 'patch-at-heading-and-distance', 'patch-here', 'patch-left-and-ahead', 'patch-right-and-ahead', 'patch-set', 'patch-size', 'patches', 'plot-name', 'plot-pen-exists\\?', 'plot-x-max', 'plot-x-min', 'plot-y-max', 'plot-y-min', 'position', 'precision', 'random', 'random-exponential', 'random-float', 'random-gamma', 'random-normal', 'random-or-random-float', 'random-poisson', 'random-pxcor', 'random-pycor', 'random-xcor', 'random-ycor', 'read-from-string', 'reduce', 'remainder', 'remove', 'remove-duplicates', 'remove-item', 'replace-item', 'reverse', 'rgb', 'round', 'run-result', 'runresult', 'scale-color', 'se', 'self', 'sentence', 'shade-of\\?', 'shapes', 'shuffle', 'sin', 'sort', 'sort-by', 'sort-on', 'sqrt', 'standard-deviation', 'subject', 'sublist', 'substring', 'subtract-headings', 'sum', 'tan', 'task', 'ticks', 'timer', 'towards', 'towards-nowrap', 'towardsxy', 'towardsxy-nowrap', 'turtle', 'turtle-set', 'turtles', 'turtles-at', 'turtles-here', 'turtles-on', 'user-directory', 'user-file', 'user-input', 'user-new-file', 'user-one-of', 'user-yes-or-no\\?', 'value-from', 'values-from', 'variance', 'with', 'with-max', 'with-min', 'word', 'world-height', 'world-width', 'wrap-color', 'xor', 'WHO', 'COLOR', 'HEADING', 'XCOR', 'YCOR', 'SHAPE', 'LABEL', 'LABEL-COLOR', 'BREED', 'HIDDEN\\?', 'SIZE', 'PEN-SIZE', 'PEN-MODE', 'PXCOR', 'PYCOR', 'PCOLOR', 'PLABEL', 'PLABEL-COLOR', 'END1', 'END2', 'COLOR', 'LABEL', 'LABEL-COLOR', 'HIDDEN\\?', 'BREED', 'THICKNESS', 'SHAPE', 'TIE-MODE', 'USERID', 'INFECTED', 'BASESHAPE'].reverse();
 
   constants = ['TRUE', 'FALSE', 'NOBODY', 'E', 'PI', 'gray', 'grey', 'red', 'orange', 'brown', 'yellow', 'green', 'lime', 'turquoise', 'cyan', 'sky', 'blue', 'violet', 'magenta', 'pink', 'black', 'white'];
 
@@ -57838,6 +57763,8 @@ into the sorting code and caused a 25% performance hit in BZ Benchmark. --JAB (4
     return AgentStreamController;
 
   })();
+  
+  var t;
 
   OBSERVE = 0;
 
@@ -59982,9 +59909,11 @@ max-possible-codes ;; total number of possible unique shape/color combinations
 quick-start  ;; current quickstart instruction displayed in the quickstart monitor
 qs-item      ;; index of the current quickstart instruction
 qs-items     ;; list of quickstart instructions
-
+welcome-teacher 
+welcome-student
 num-infected-last-plotted ;; used in plotting only
                         ;; number of turtles that had infected = true the last time we plotted.
+temp
 ]
 
 turtles-own
@@ -60079,57 +60008,23 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 to go
-;; get commands and data from the clients
-  listen-clients
-
-;; CR removed "every 0.1".
-every 1
-[
-;;allow the androids to wander around the view
-if wander? [ androids-wander ]
-
-ask turtles with [ infected? ]
-[ spread-disease ]
-
-
-;; keeps track of the number of times through the go procedure (if there is at least one turtle infected)
-;; use an ifelse here to avoid redundant displays because tick forces a display.
-;; we only want to keep track of time once the first turtle has been infected.
-  if count turtles with [infected?] > 0
-  [ tick ]
-;; CR removed "display". It is un-needed.
-;; [ display ]
-
-if count turtles with [infected?] > 0
-[ 
-  tick 
-  let n count turtles with [infected?]
-  if n > num-infected-last-plotted 
-  [
-    plotxy ticks - 1 n
-    set num-infected-last-plotted n 
+  every 0.2 [
+    while [ length hubnet-message-list > 0]
+    [
+      execute-message first hubnet-message-list
+      hubnet-clear-message
+    ]
+    if wander? [ androids-wander ]
+    ask turtles with [ infected? ]
+    [ spread-disease ]
+    if count turtles with [infected?] > 0
+    [ 
+      tick 
+      let n count turtles with [infected?]
+        plotxy ticks - 1 n
+        set num-infected-last-plotted n 
+    ]
   ]
-]
-
-]
-end
-
-to go-0.25
-;; CR add a "go" button, that repeats every 0.25.
-listen-clients
-every 0.25 [
-;;allow the androids to wander around the view
-if wander? [ androids-wander ]
-ask turtles with [ infected? ]
-[ spread-disease ]
-if count turtles with [infected?] > 0
-[ 
-  tick 
-  let n count turtles with [infected?]
-    plotxy ticks - 1 n
-    set num-infected-last-plotted n 
-]
-]
 end
 
 ;; controls the motion of the androids
@@ -60217,29 +60112,25 @@ ask n-of initial-number-sick healthy-turtles
 ]
 end
 
+to user-click
+end
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; HubNet Procedures ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 
-;; determines which client sent a command, and what the command was
-to listen-clients
- 
- if hubnet-message-waiting? [
-   hubnet-fetch-message
-   ifelse hubnet-enter-message?
-   [ create-new-student ]
-   [ 
-     ifelse hubnet-exit-message?
-     [ remove-student ]
-     [
-       ask students with [ userid = hubnet-message-source ]
-       [ execute-command hubnet-message-tag ]
-     ]
-   ]
- ]
-
-  ;;ask students
-  ;;[ update-sick?-monitor ]
+to execute-message [ message-package ]
+  let source item 0 message-package 
+  let tag item 1 message-package 
+  ifelse tag = "hubnet-enter-message" 
+  [ create-new-student source ]
+  [ ifelse tag = "hubnet-exit-message" 
+    [ remove-student source ]
+    [    
+      let message item 2 message-package 
+      ask students with [userid = source ]
+      [ execute-command source tag message ]
+    ]
+  ]
 end
 
 ;; NetLogo knows what each student turtle is supposed to be
@@ -60250,29 +60141,30 @@ end
 ;; Right - make the turtle move right by step-size
 ;; Left  - make the turtle move left by step-size
 ;; Get a Different Turtle - change the turtle's shape and color
-to execute-command [command]
-  if command = "step-size"
+to execute-command [source tag message]
+  if tag = "step-size"
   [
-    set step-size hubnet-message
+    set step-size message
     stop
   ]
-  if command = "Up"
+  if tag = "Up"
   [ execute-move 0 stop ]
-  if command = "Down"
+  if tag = "Down"
   [ execute-move 180 stop ]
-  if command = "Right"
+  if tag = "Right"
   [ execute-move 90 stop ]
-  if command = "Left"
+  if tag = "Left"
   [ execute-move 270 stop ]
-  if command = "Change Appearance"
+  if tag = "Change Appearance"
   [ execute-change-turtle stop ]
 end
 
 ;; Create a turtle, set its shape, color, and position
 ;; and tell the node what its turtle looks like and where it is
-to create-new-student
+to create-new-student [source]
 create-students 1
 [
+set userid source
 setup-student-vars
 send-info-to-clients
 
@@ -60286,7 +60178,7 @@ end
 
 ;; sets the turtle variables to appropriate initial values
 to setup-student-vars  ;; turtle procedure
-set userid hubnet-message-source
+;;set userid hubnet-message-source
 set-unique-shape-and-color
 move-to one-of patches
 face one-of neighbors4
@@ -60330,8 +60222,8 @@ end
 
 ;; Kill the turtle, set its shape, color, and position
 ;; and tell the node what its turtle looks like and where it is
-to remove-student
-  ask students with [userid = hubnet-message-source]
+to remove-student [ source ]
+  ask students with [userid = source]
   [
     set used-shape-colors remove my-code used-shape-colors
     die
@@ -60355,15 +60247,15 @@ end
 
 to execute-change-turtle
   show "execute-change-turtle"
-  ask students with [userid = hubnet-message-source]
-  [
-    set used-shape-colors remove my-code used-shape-colors
-    show-turtle
-    set-unique-shape-and-color
-    hubnet-send userid "You are a:" (word (color-string color) " " base-shape)
-    if infected?
-    [ set-sick-shape ]
-  ]
+  ;;ask students with [userid = hubnet-message-source]
+  ;;[
+  ;;  set used-shape-colors remove my-code used-shape-colors
+  ;;  show-turtle
+  ;;  set-unique-shape-and-color
+  ;;  hubnet-send userid "You are a:" (word (color-string color) " " base-shape)
+  ;;  if infected?
+  ;;  [ set-sick-shape ]
+  ;;]
 end
 
 ;;; this procedure is handy for testing out additional shapes and colors;
@@ -60402,6 +60294,8 @@ end
 
 ;; instructions to quickly setup the model, and clients to run this activity
 to setup-quick-start
+set welcome-teacher "Please create a room."
+set welcome-student "Please choose a room."
 set qs-item 0
 set qs-items
 [
@@ -60467,10 +60361,6 @@ to client-right
 end
 
 to client-change-appearance
-end
-
-to netlogo-code-from-dom
-show hubnet-web-message
 end
 
 ; Copyright 1999 Uri Wilensky and Walter Stroup.
@@ -60644,8 +60534,8 @@ MONITOR
 283
 128
 328
-Hub msg wait
-hubnet-enter-message?
+Turtles
+count turtles
 0
 1
 11
@@ -60802,10 +60692,6 @@ NIL
 
 
 
-
-
-
-
 BUTTON
 91
 199
@@ -60818,7 +60704,7 @@ NIL
 T
 OBSERVER
 NIL
-K
+NIL
 NIL
 NIL
 1
@@ -60835,7 +60721,7 @@ NIL
 T
 OBSERVER
 NIL
-I
+NIL
 NIL
 NIL
 1
@@ -60852,7 +60738,7 @@ NIL
 T
 OBSERVER
 NIL
-L
+NIL
 NIL
 NIL
 1
@@ -60869,7 +60755,7 @@ NIL
 T
 OBSERVER
 NIL
-J
+NIL
 NIL
 NIL
 1
@@ -60940,24 +60826,35 @@ Sick?
 11
 
 INPUTBOX
-280
-520
-600
-580
-hubnet-web-message
+39
+355
+181
+415
+Room-Name
 NIL
 1
 0
 String
 
+MONITOR
+40
+42
+285
+87
+Welcome Student
+welcome-student
+17
+1
+11
+
 BUTTON
-591
-530
-669
-563
+186
+381
+289
+414
+Create
+user-click
 NIL
-go-0.25
-T
 1
 T
 OBSERVER
@@ -60966,6 +60863,119 @@ NIL
 NIL
 NIL
 1
+
+BUTTON
+39
+95
+159
+128
+Room 1
+user-click
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+164
+135
+285
+168
+Room 3
+user-click
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+38
+135
+159
+168
+Room 2
+user-click
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+164
+94
+285
+127
+Room 4
+user-click
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+164
+174
+284
+207
+Room 5
+user-click
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+38
+174
+159
+207
+Room 6
+user-click
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+MONITOR
+40
+301
+290
+346
+Welcome Teacher
+welcome-teacher
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
