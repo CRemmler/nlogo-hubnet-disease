@@ -1,0 +1,31 @@
+{
+  "interfaceJs": {
+    "loginComponents": {
+      "createRoomButton": "#netlogo-button-32",
+      "createRoomInput": "#netlogo-inputBox-30 textarea",
+      "joinRoomButtons": [
+        "#netlogo-button-33", "#netlogo-button-34", "#netlogo-button-35", 
+        "#netlogo-button-36", "#netlogo-button-37", "#netlogo-button-38"
+      ],
+      "componentRange": [30, 43]
+    },
+    "studentComponents": {
+      "componentRange": [21, 29]
+    },
+    "teacherComponents": {
+      "componentRange": [0, 20]
+    }
+  },
+  "clientJs": {
+    "reporterComponents": {
+      "You are a:": "#netlogo-monitor-27 output",
+      "Located at:": "#netlogo-monitor-28 output",
+      "Sick?": "#netlogo-monitor-29 output"
+    }
+  },
+  "eventJs": {
+    "slider": {
+      "step-size": "#netlogo-slider-26"
+    }
+  }
+}
