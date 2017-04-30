@@ -18,9 +18,10 @@ io.on('connection', function(socket){
 	var rooms = [];
 	for (var key in roomData) { rooms.push(key); }
 	socket.emit("display interface", {userType: "login", rooms: rooms});
+	socket.join("login");
 	
 	function enableTimer() {
-		console.log("enable");
+		//console.log("enable");
 		var myTimer = setInterval(function() {
 			for (var key in roomData) {
 				if (socket) {
@@ -31,14 +32,14 @@ io.on('connection', function(socket){
 	}
 
 	function disableTimer() {
-		console.log("disable");
+		//console.log("disable");
 		clearInterval(myTimer);
 	}
 	
 	// user enters room
 	socket.on("enter room", function(data) {
 		var myUserType, myUserId, myTurtleId;
-		
+		socket.leave("login");
 		if (data.room === "admin") {
 			socket.emit("display admin", {roomData: getRoomData()});
 			
@@ -74,12 +75,18 @@ io.on('connection', function(socket){
 			socket.join(myRoom+"-"+myUserType);
 			
 			// tell teacher or student to display their interface
-			socket.emit("display interface", {userType: socket.myUserType});
+			socket.emit("display interface", {userType: socket.myUserType, room: myRoom});
 	    
 			if (myUserType === "teacher") {
 				// remember that there is already a teacher in room
 				roomData[myRoom].teacherInRoom = true;
 				roomData[myRoom].userIdDict["teacher"] = myUserId;
+					
+				//send to all students on intro page
+				rooms = [];
+				for (var key in roomData) { rooms.push(key); }
+				socket.to("login").emit("display interface", {userType: "login", rooms: rooms});
+					
 			} else {
 				// send teacher a hubnet-enter-message
 				socket.to(myRoom+"-teacher").emit("execute command", {hubnetMessageSource: myUserId, hubnetMessageTag: "hubnet-enter-message", hubnetMessage: ""});
@@ -116,7 +123,7 @@ io.on('connection', function(socket){
 	
 	// pass command from student to teacher
 	socket.on("send command", function(data) {
-		console.log(data.hubnetMessageTag+" "+data.hubnetMessage);
+		//console.log(data.hubnetMessageTag+" "+data.hubnetMessage);
 		var myRoom = socket.myRoom;
 		var myUserId = socket.id;
 		socket.to(myRoom+"-teacher").emit("execute command", {

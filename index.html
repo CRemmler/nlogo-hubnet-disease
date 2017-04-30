@@ -1563,15 +1563,11 @@ img.link-img {
   background-color: #e6e6e6;
 }
 
-#noRoomsChosen {
-  padding: 15px;
-}
-
 </style>
   </head>
-  <body style="margin: 0px;">
+  <body style="margin: 10px;">
     <div class="admin-body">
-      <p><span id="adminData"></span>
+      <span id="admin-data"></span>
     </div>
     <div class="dark-overlay" id="loading-overlay">
   <div id="spinner">
@@ -1641,7 +1637,7 @@ img.link-img {
     </div>
 </div>
 
-    <div id="netlogo-model-container" style="display: inline-block; padding:10px"></div>
+    <div id="netlogo-model-container" style="display: inline-block; padding:0px"></div>
     <script type="text/javascript" src="js/tortoiseCompiler.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
   	<script type="text/javascript" src="js/client.js"></script>
@@ -47088,32 +47084,77 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
 (function() {
   
   var HubnetManager;
-  var hubnetMessageList = [];
-  
+  var hubnetMessageWaiting = false;
+  var hubnetEnterMessage = false;
+  var hubnetExitMessage = false;
+  var hubnetMessage = "";
+  var hubnetMessageSource = "";
+  var hubnetMessageTag = "";
+
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   module.exports = HubnetManager = (function() {
     
     function HubnetManager() {
+      this._hubnetFetchMessage = bind(this._hubnetFetchMessage, this);
       this._hubnetSend = bind(this._hubnetSend, this);
-      this._hubnetClearMessage = bind(this._hubnetClearMessage, this);
-      this._getHubnetMessageList = bind(this._getHubnetMessageList, this);
-      this._setHubnetMessageList = bind(this._setHubnetMessageList, this);
-      this._addToHubnetMessageList = bind(this._addToHubnetMessageList, this);
+      this._getHubnetMessageWaiting = bind(this._getHubnetMessageWaiting, this);
+      this._setHubnetMessageWaiting = bind(this._setHubnetMessageWaiting, this);
+      this._getHubnetEnterMessage = bind(this._getHubnetEnterMessage, this);
+      this._setHubnetEnterMessage = bind(this._setHubnetEnterMessage, this);
+      this._getHubnetExitMessage = bind(this._getHubnetExitMessage, this);
+      this._setHubnetExitMessage = bind(this._setHubnetExitMessage, this);
+      this._getHubnetMessage = bind(this._getHubnetMessage, this);
+      this._setHubnetMessage = bind(this._setHubnetMessage, this);
+      this._getHubnetMessageSource = bind(this._getHubnetMessageSource, this);
+      this._setHubnetMessageSource = bind(this._setHubnetMessageSource, this);
+      this._getHubnetMessageTag = bind(this._getHubnetMessageTag, this);
+      this._setHubnetMessageTag = bind(this._setHubnetMessageTag, this);
     }
     
     // Reporters
-    HubnetManager.prototype.getHubnetMessageList = function() {
-      return hubnetMessageList;
+    HubnetManager.prototype.getHubnetMessageWaiting = function() {
+      return hubnetMessageWaiting;
     };
-    HubnetManager.prototype.setHubnetMessageList = function(messageList) {
-      hubnetMessageList = messageList;
+    HubnetManager.prototype.setHubnetMessageWaiting = function(messageWaiting) {
+      hubnetMessageWaiting = messageWaiting;
     };
-    HubnetManager.prototype.addToHubnetMessageList = function(messagePackage) {
-      hubnetMessageList.push(messagePackage);
+    HubnetManager.prototype.getHubnetEnterMessage = function() {
+      return hubnetEnterMessage;
+    };
+    HubnetManager.prototype.setHubnetEnterMessage = function(enterMessage) {
+      hubnetEnterMessage = enterMessage;
+    };
+    HubnetManager.prototype.getHubnetExitMessage = function() {
+      return hubnetExitMessage;
+    };
+    HubnetManager.prototype.setHubnetExitMessage = function(exitMessage) {
+      hubnetExitMessage = exitMessage;
+    };
+    HubnetManager.prototype.getHubnetMessage = function() {
+      return hubnetMessage;
+    };
+    HubnetManager.prototype.setHubnetMessage = function(message) {
+      hubnetMessage = message;
+    };
+    HubnetManager.prototype.getHubnetMessageSource = function() {
+      return hubnetMessageSource;
+    };
+    HubnetManager.prototype.setHubnetMessageSource = function(messageSource) {
+      hubnetMessageSource = messageSource;
+    };
+    HubnetManager.prototype.getHubnetMessageTag = function() {
+      return hubnetMessageTag;
+    };
+    HubnetManager.prototype.setHubnetMessageTag = function(messageTag) {
+      hubnetMessageTag = messageTag;
     };
     
     // Commands
+    HubnetManager.prototype.hubnetFetchMessage = function() {
+      processCommand(commandQueue.shift());
+    };
+    
     HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
       socket.emit("send reporter", {
         hubnetMessageSource: messageSource, 
@@ -47122,11 +47163,26 @@ c=e.buttons;A=0;if(e.enabled!==!1){for(b in c)a.addButton(c[b]);u(a,"destroy",a.
       });
     };
     
-    HubnetManager.prototype.hubnetClearMessage = function() {
-      hubnetMessageList.pop();
-    };
+    var processCommand = function(m) {
+      console.log(m.messageSource+" "+m.messageTag+" "+m.message);
+      if (commandQueue.length === 0) {
+        world.hubnetManager.setHubnetMessageWaiting(false);
+      }
+      world.hubnetManager.setHubnetEnterMessage(false);
+      world.hubnetManager.setHubnetExitMessage(false);
+      world.hubnetManager.setHubnetMessageSource(m.messageSource);
+      world.hubnetManager.setHubnetMessageTag(m.messageTag);
+      world.hubnetManager.setHubnetMessage(m.message);
+      if (m.messageTag === "hubnet-enter-message") {
+        world.hubnetManager.setHubnetEnterMessage(true);
+      }
+      if (m.messageTag === "hubnet-exit-message") {
+        world.hubnetManager.setHubnetExitMessage(true);
+      }
+    }
     
     return HubnetManager;
+
     
   })();
 
@@ -59894,6 +59950,7 @@ _nS('controllers.Local'); _root['controllers']['Local']['standalone'] =
 ;; Variable and Breed declarations ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 globals
 [
 run-number
@@ -59909,12 +59966,12 @@ max-possible-codes ;; total number of possible unique shape/color combinations
 quick-start  ;; current quickstart instruction displayed in the quickstart monitor
 qs-item      ;; index of the current quickstart instruction
 qs-items     ;; list of quickstart instructions
-welcome-teacher 
+welcome-teacher
 welcome-student
 num-infected-last-plotted ;; used in plotting only
                         ;; number of turtles that had infected = true the last time we plotted.
-temp
 ]
+
 
 turtles-own
 [
@@ -60008,23 +60065,57 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 to go
-  every 0.2 [
-    while [ length hubnet-message-list > 0]
-    [
-      execute-message first hubnet-message-list
-      hubnet-clear-message
-    ]
-    if wander? [ androids-wander ]
-    ask turtles with [ infected? ]
-    [ spread-disease ]
-    if count turtles with [infected?] > 0
-    [ 
-      tick 
-      let n count turtles with [infected?]
-        plotxy ticks - 1 n
-        set num-infected-last-plotted n 
-    ]
+;; get commands and data from the clients
+  listen-clients
+
+;; CR removed "every 0.1".
+every 0.25
+[
+;;allow the androids to wander around the view
+if wander? [ androids-wander ]
+
+ask turtles with [ infected? ]
+[ spread-disease ]
+
+
+;; keeps track of the number of times through the go procedure (if there is at least one turtle infected)
+;; use an ifelse here to avoid redundant displays because tick forces a display.
+;; we only want to keep track of time once the first turtle has been infected.
+  if count turtles with [infected?] > 0
+  [ tick ]
+;; CR removed "display". It is un-needed.
+;; [ display ]
+
+if count turtles with [infected?] > 0
+[ 
+  tick 
+  let n count turtles with [infected?]
+  if n > num-infected-last-plotted 
+  [
+    plotxy ticks - 1 n
+    set num-infected-last-plotted n 
   ]
+]
+
+]
+end
+
+to go-0.25
+;; CR add a "go" button, that repeats every 0.25.
+listen-clients
+every 0.25 [
+;;allow the androids to wander around the view
+if wander? [ androids-wander ]
+ask turtles with [ infected? ]
+[ spread-disease ]
+if count turtles with [infected?] > 0
+[ 
+  tick 
+  let n count turtles with [infected?]
+    plotxy ticks - 1 n
+    set num-infected-last-plotted n 
+]
+]
 end
 
 ;; controls the motion of the androids
@@ -60112,25 +60203,29 @@ ask n-of initial-number-sick healthy-turtles
 ]
 end
 
-to user-click
-end
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; HubNet Procedures ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 
-to execute-message [ message-package ]
-  let source item 0 message-package 
-  let tag item 1 message-package 
-  ifelse tag = "hubnet-enter-message" 
-  [ create-new-student source ]
-  [ ifelse tag = "hubnet-exit-message" 
-    [ remove-student source ]
-    [    
-      let message item 2 message-package 
-      ask students with [userid = source ]
-      [ execute-command source tag message ]
-    ]
-  ]
+;; determines which client sent a command, and what the command was
+to listen-clients
+ 
+ if hubnet-message-waiting? [
+   hubnet-fetch-message
+   ifelse hubnet-enter-message?
+   [ create-new-student ]
+   [ 
+     ifelse hubnet-exit-message?
+     [ remove-student ]
+     [
+       ask students with [ userid = hubnet-message-source ]
+       [ execute-command hubnet-message-tag ]
+     ]
+   ]
+ ]
+
+  ;;ask students
+  ;;[ update-sick?-monitor ]
 end
 
 ;; NetLogo knows what each student turtle is supposed to be
@@ -60141,30 +60236,29 @@ end
 ;; Right - make the turtle move right by step-size
 ;; Left  - make the turtle move left by step-size
 ;; Get a Different Turtle - change the turtle's shape and color
-to execute-command [source tag message]
-  if tag = "step-size"
+to execute-command [command]
+  if command = "step-size"
   [
-    set step-size message
+    set step-size hubnet-message
     stop
   ]
-  if tag = "Up"
+  if command = "Up"
   [ execute-move 0 stop ]
-  if tag = "Down"
+  if command = "Down"
   [ execute-move 180 stop ]
-  if tag = "Right"
+  if command = "Right"
   [ execute-move 90 stop ]
-  if tag = "Left"
+  if command = "Left"
   [ execute-move 270 stop ]
-  if tag = "Change Appearance"
+  if command = "Change Appearance"
   [ execute-change-turtle stop ]
 end
 
 ;; Create a turtle, set its shape, color, and position
 ;; and tell the node what its turtle looks like and where it is
-to create-new-student [source]
+to create-new-student
 create-students 1
 [
-set userid source
 setup-student-vars
 send-info-to-clients
 
@@ -60178,7 +60272,7 @@ end
 
 ;; sets the turtle variables to appropriate initial values
 to setup-student-vars  ;; turtle procedure
-;;set userid hubnet-message-source
+set userid hubnet-message-source
 set-unique-shape-and-color
 move-to one-of patches
 face one-of neighbors4
@@ -60222,8 +60316,8 @@ end
 
 ;; Kill the turtle, set its shape, color, and position
 ;; and tell the node what its turtle looks like and where it is
-to remove-student [ source ]
-  ask students with [userid = source]
+to remove-student
+  ask students with [userid = hubnet-message-source]
   [
     set used-shape-colors remove my-code used-shape-colors
     die
@@ -60246,17 +60340,17 @@ to execute-move [new-heading]
 end
 
 to execute-change-turtle
-  show "execute-change-turtle"
-  ;;ask students with [userid = hubnet-message-source]
-  ;;[
-  ;;  set used-shape-colors remove my-code used-shape-colors
-  ;;  show-turtle
-  ;;  set-unique-shape-and-color
-  ;;  hubnet-send userid "You are a:" (word (color-string color) " " base-shape)
-  ;;  if infected?
-  ;;  [ set-sick-shape ]
-  ;;]
+  ask students with [userid = hubnet-message-source]
+  [
+    set used-shape-colors remove my-code used-shape-colors
+    show-turtle
+    set-unique-shape-and-color
+    hubnet-send userid "You are a:" (word (color-string color) " " base-shape)
+    if infected?
+    [ set-sick-shape ]
+  ]
 end
+
 
 ;;; this procedure is handy for testing out additional shapes and colors;
 ;;; you can call it from the Command Center
@@ -60361,6 +60455,9 @@ to client-right
 end
 
 to client-change-appearance
+end
+
+to user-click
 end
 
 ; Copyright 1999 Uri Wilensky and Walter Stroup.

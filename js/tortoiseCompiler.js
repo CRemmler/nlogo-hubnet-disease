@@ -16802,12 +16802,12 @@
             Le$ = (new E).f("HUBNET-MESSAGE-TAG", R(function() {
                 return (new KNah).d()
             })),
-            Lf$ = (new E).f("HUBNET-MESSAGE-LIST", R(function() {
+            Lf$ = (new E).f("HUBNET-MESSAGE-SOURCE", R(function() {
                 return (new KNai).d()
             }));
         this.Sj = kf(Tc, (new x).g([ce, Xf, te, nf, Pd, Bd, Pe, of , Qe, Uc, Yf, id, Qd, Vc, pf, Rd, Sd, Re, Se, Dg, de, Te,
             qf, ih, ee, wc, Cd, rf, ue, Eg, Fg, Gg, Hg, jh, ve, fe, Ue, kh, lh, Kh, ii, ji, Ig, Lh, mh, Jg, Zf, Mh, Kg, Ve, sf, ki, tf, $f, nh, uf, Td, oh, vf, ph, Lg, We, ag, wf, xf, Mg, yf, Ng, Og, Pg, pj, hk, qj, ik, vl, wl, rj, xl, Hi, Im, ir, jr, kr, yl, lr, zl, jk, mr, nr, kk, sj, Al, lk, Ii, Jm, mk, or, nk, ok, pr, Km, qr, li, qh, pk, qk, rr, sr, XH, Ky, YH, ZH, Ly, My, $H, aI, Oy, Ur, $l, Vr, am, Py, cI, tn, Kk, dI, Wr, un, eI, fI, gI, Qy, hI, S8, T8, U8, V8, W8, X8, Y8, Z8, $8, a9, b9, c9, d9, e9, f9, g9, h9, i9, j9, k9, l9, m9, x0, n9, o9, p9, q9, r9, s9, t9, u9, v9, w9, x9, y9, z9, A9, B9, C9, D9, E9, F9, G9, H9, I9, J9, K9, L9, M9, N9, O9, P9, Q9, R9, S9, T9,
-            U9, V9, W9, X9, Y9, Z9, $9, y0, a$, b$, c$, d$, e$, f$, g$, h$, i$, j$, k$, l$, m$, n$, o$, p$, q$, r$, s$, t$, u$, v$, w$, x$, y$, z$, z0, A$, B$, C$, D$, E$, F$, G$, H$, I$, J$, K$, L$, La$, Lb$, Lc$, Ld$, Le$, Lf$, (new E).f("XOR", R(function() {
+            U9, V9, W9, X9, Y9, Z9, $9, y0, a$, b$, c$, d$, e$, f$, g$, h$, i$, j$, k$, l$, m$, n$, o$, p$, q$, r$, s$, t$, u$, v$, w$, x$, y$, z$, z0, A$, B$, C$, D$, E$, F$, G$, H$, I$, J$, K$, L$, La$, Lb$, Lc$, Ld$, Le$, Lf$,  (new E).f("XOR", R(function() {
                 return (new TK).d()
             }))
         ]));
@@ -17362,7 +17362,7 @@
             eDa = (new E).f("WITHOUT-INTERRUPTION", R(function() {
                 return (new KN).d()
             })),
-            eDab = (new E).f("HUBNET-CLEAR-MESSAGE", R(function() {
+            eDab = (new E).f("HUBNET-FETCH-MESSAGE", R(function() {
                 return (new KNab).d()
             })),
             eDac = (new E).f("HUBNET-SEND", R(function() {
@@ -18250,8 +18250,8 @@
             SSa = (new E).f("etc._wrapcolor", RSa),
             TSa = F(t(), (new x).g(["XOR"])),
             USa = (new E).f("etc._xor", TSa),
-            VSa = F(t(), (new x).g(["HUBNET-CLEAR-MESSAGE"])),
-            WSa = (new E).f("etc._hubnetclearmessage", VSa),
+            VSa = F(t(), (new x).g(["HUBNET-FETCH-MESSAGE"])),
+            WSa = (new E).f("etc._hubnetfetchmessage", VSa),
             XSa = F(t(), (new x).g(["HUBNET-SEND"])),
             YSa = (new E).f("etc._hubnetsend", XSa),
             YSb = F(t(), (new x).g(["HUBNET-MESSAGE-WAITING?"])),
@@ -18264,8 +18264,8 @@
             YSi = (new E).f("etc._hubnetmessage", YSh),
             YSj = F(t(), (new x).g(["HUBNET-MESSAGE-TAG"])),
             YSk = (new E).f("etc._hubnetmessagetag", YSj),
-            YSl = F(t(), (new x).g(["HUBNET-MESSAGE-LIST"])),
-            YSm = (new E).f("etc._hubnetmessagelist", YSl);
+            YSl = F(t(), (new x).g(["HUBNET-MESSAGE-SOURCE"])),
+            YSm = (new E).f("etc._hubnetmessagesource", YSl);
             
         this.Aia = kf(fDa, (new x).g([hDa, jDa, lDa, nDa, pDa,
             rDa, tDa, vDa, xDa, zDa, BDa, DDa, FDa, HDa, JDa, LDa, NDa, PDa, RDa, TDa, VDa, XDa, ZDa, aEa, cEa, eEa, gEa, iEa, kEa, mEa, oEa, qEa, sEa, uEa, wEa, yEa, AEa, CEa, EEa, GEa, IEa, KEa, MEa, OEa, QEa, SEa, UEa, WEa, YEa, $Ea, bFa, dFa, fFa, hFa, jFa, lFa, nFa, pFa, rFa, tFa, vFa, xFa, zFa, BFa, DFa, FFa, HFa, JFa, LFa, NFa, PFa, RFa, TFa, VFa, XFa, ZFa, aGa, cGa, eGa, gGa, iGa, kGa, mGa, oGa, qGa, sGa, uGa, wGa, yGa, AGa, CGa, EGa, GGa, IGa, KGa, MGa, OGa, QGa, SGa, UGa, WGa, YGa, $Ga, bHa, dHa, fHa, hHa, jHa, lHa, nHa, pHa, rHa, tHa, vHa, xHa, zHa, BHa, DHa, FHa, HHa, JHa, LHa, NHa, PHa, RHa, THa, VHa, XHa, ZHa, aIa, cIa,
@@ -56750,7 +56750,7 @@
         return iwa(a) ? "PrintPrims.print" : jwa(a) ? "PrintPrims.show(SelfManager.self)" : kwa(a) ? "PrintPrims.type" : lwa(a) ? "PrintPrims.write" : mwa(a) ? "OutputPrims.clear" : nwa(a) ? "OutputPrims.print" : owa(a) ? "OutputPrims.show(SelfManager.self)" : pwa(a) ? "OutputPrims.type" : qwa(a) ? "OutputPrims.write" : rwa(a) ? "SelfManager.self().fd" : swa(a) ? "SelfManager.self().jumpIfAble" : twa(a) ? "SelfManager.self().die" : uwa(a) ? "SelfManager.self().face" : vwa(a) ? "SelfManager.self().faceXY" : wwa(a) ? "SelfManager.self().followMe" :
             xwa(a) ? "SelfManager.self().goHome" : ywa(a) ? "SelfManager.self().moveTo" : zwa(a) ? "SelfManager.self().penManager.lowerPen" : Awa(a) ? "SelfManager.self().penManager.useEraser" : Bwa(a) ? "SelfManager.self().penManager.raisePen" : Cwa(a) ? "SelfManager.self().rideMe" : Dwa(a) ? "SelfManager.self().right" : Ewa(a) ? "SelfManager.self().setXY" : Fwa(a) ? "SelfManager.self().stamp" : Gwa(a) ? "SelfManager.self().stampErase" : Hwa(a) ? "SelfManager.self().tie" : Iwa(a) ? "SelfManager.self().untie" : Jwa(a) ? "SelfManager.self().watchMe" : Kwa(a) ? "plotManager.disableAutoplotting" :
             Lwa(a) ? "plotManager.enableAutoplotting" : Mwa(a) ? "plotManager.clearAllPlots" : Nwa(a) ? "plotManager.clearPlot" : Owa(a) ? "plotManager.createTemporaryPen" : Pwa(a) ? "plotManager.drawHistogramFrom" : Qwa(a) ? "plotManager.lowerPen" : Rwa(a) ? "plotManager.resetPen" : Swa(a) ? "plotManager.raisePen" : Twa(a) ? "plotManager.plotValue" : Uwa(a) ? "plotManager.plotPoint" : Vwa(a) ? "plotManager.setCurrentPen" : Wwa(a) ? "plotManager.setCurrentPlot" : Xwa(a) ? "plotManager.setHistogramBarCount" : Ywa(a) ? "plotManager.setPenColor" : Zwa(a) ? "plotManager.setPenInterval" :
-            $wa(a) ? "plotManager.setPenMode" : axa(a) ? "plotManager.setXRange" : bxa(a) ? "plotManager.setYRange" : cxa(a) ? "plotManager.setupPlots" : dxa(a) ? "plotManager.updatePlots" : exa(a) ? "world.clearAll" : fxa(a) ? "world.clearDrawing" : gxa(a) ? "world.observer.clearCodeGlobals" : hxa(a) ? "world.clearPatches" : ixa(a) ? "world.turtleManager.clearTurtles" : ixb(a) ? "world.hubnetManager.hubnetClearMessage" : ixc(a) ? "world.hubnetManager.hubnetSend" : jxa(a) ? "world.ticker.clear" : kxa(a) ? "world.linkManager.clear" : lxa(a) ? "world.resize" : mxa(a) ? "world.setPatchSize" : nxa(a) ? "world.ticker.reset" : oxa(a) ? "world.ticker.tick" : pxa(a) ? "world.ticker.tickAdvance" :
+            $wa(a) ? "plotManager.setPenMode" : axa(a) ? "plotManager.setXRange" : bxa(a) ? "plotManager.setYRange" : cxa(a) ? "plotManager.setupPlots" : dxa(a) ? "plotManager.updatePlots" : exa(a) ? "world.clearAll" : fxa(a) ? "world.clearDrawing" : gxa(a) ? "world.observer.clearCodeGlobals" : hxa(a) ? "world.clearPatches" : ixa(a) ? "world.turtleManager.clearTurtles" : ixb(a) ? "world.hubnetManager.hubnetFetchMessage" : ixc(a) ? "world.hubnetManager.hubnetSend" : jxa(a) ? "world.ticker.clear" : kxa(a) ? "world.linkManager.clear" : lxa(a) ? "world.resize" : mxa(a) ? "world.setPatchSize" : nxa(a) ? "world.ticker.reset" : oxa(a) ? "world.ticker.tick" : pxa(a) ? "world.ticker.tickAdvance" :
             qxa(a) ? "workspace.timer.reset" : rxa(a) ? "workspace.rng.setSeed" : sxa(a) ? "world.observer.follow" : txa(a) ? "world.observer.ride" : uxa(a) ? "world.observer.watch" : vxa(a) ? "world.observer.resetPerspective" : wxa(a) ? "LayoutManager.layoutSpring" : xxa(a) ? "LayoutManager.layoutCircle" : yxa(a) ? "LayoutManager.layoutRadial" : zxa(a) ? "LayoutManager.layoutTutte" : Axa(a) ? "world.changeTopology" : Bxa(a) ? "Tasks.apply" : Cxa(a) ? "Prims.stdout" : Dxa(a) ? "UserDialogPrims.confirm" : Exa(a) ? "ExportPrims.exportOutput" : Fxa(a) ? "notImplemented('display', undefined)" :
             c.t(a)
     };
@@ -56782,7 +56782,7 @@
     l.gn = function(a) {
         return Gxa(a) || Hxa(a) || Ixa(a) || Jxa(a) || Kxa(a) || Lxa(a) || Mxa(a) || Nxa(a) || Oxa(a) || Pxa(a) || Qxa(a) || Rxa(a) || Sxa(a) || Txa(a) || Uxa(a) || Vxa(a) || Wxa(a) || Xxa(a) || Yxa(a) || Zxa(a) || $xa(a) || aya(a) || bya(a) || cya(a) || dya(a) || eya(a) || fya(a) || gya(a) || hya(a) || iya(a) || jya(a) || kya(a) || lya(a) || mya(a) || nya(a) || oya(a) || pya(a) || qya(a) || rya(a) || sya(a) || tya(a) || uya(a) || vya(a) || wya(a) || xya(a) || yya(a) || zya(a) || Aya(a) || Bya(a) || Cya(a) || Dya(a) || Eya(a) || Fya(a) || Gya(a) || Hya(a) || Iya(a) || Jya(a) || Kya(a) || Lya(a) || Mya(a) ||
             Nya(a) || Oya(a) || Pya(a) || Qya(a) || Rya(a) || Sya(a) || Tya(a) || Uya(a) || Vya(a) || Wya(a) || Xya(a) || Yya(a) || Zya(a) || $ya(a) || aza(a) || bza(a) || cza(a) || dza(a) || eza(a) || fza(a) || gza(a) || hza(a) || iza(a) || jza(a) || kza(a) || lza(a) || mza(a) || nza(a) || oza(a) || pza(a) || qza(a) || rza(a) || sza(a) || tza(a) || uza(a) || vza(a) || wza(a) || xza(a) || yza(a) || zza(a) || Aza(a) || Bza(a) || Cza(a) || Dza(a) || Eza(a) || Fza(a) || Gza(a) || Hza(a) || Iza(a) || Jza(a) || Kza(a) || Lza(a) || Mza(a) || Nza(a) || Oza(a) || Pza(a) || Qza(a) || Rza(a) || Sza(a) || Tza(a) || Uza(a) || Vza(a) || Wza(a) ||
-            Xza(a) || Yza(a) || Zza(a) || $za(a) || aAa(a) || bAa(a) || cAa(a) || dAa(a) || eAa(a) || fAa(a) || fAb(a) || fAc(a) || fAd(a) || fAj(a)
+            Xza(a) || Yza(a) || Zza(a) || $za(a) || aAa(a) || bAa(a) || cAa(a) || dAa(a) || eAa(a) || fAa(a) || fAb(a) || fAc(a) || fAd(a)
     };
     l.Gm = function(a, c) {
         return Gxa(a) ? "SelfPrims.linkHeading" : Hxa(a) ? "SelfPrims.linkLength" : Ixa(a) ? "SelfPrims.other" : Jxa(a) ? "SelfManager.self().bothEnds" : Kxa(a) ? "SelfManager.self().canMove" : Lxa(a) ? "SelfManager.self().distance" : Mxa(a) ? "SelfManager.self().distanceXY" : Nxa(a) ? "SelfManager.self().dx" : Oxa(a) ? "SelfManager.self().dy" : Pxa(a) ? "SelfManager.myself" : Qxa(a) ? "SelfManager.self().otherEnd" : Rxa(a) ? "SelfManager.self().patchAhead" : Sxa(a) ? "SelfManager.self().patchAtHeadingAndDistance" : Txa(a) ? "SelfManager.self().getPatchHere" :
@@ -56792,7 +56792,7 @@
             Sya(a) ? "plotManager.getPlotYMin" : Tya(a) ? "MousePrims.isDown" : Uya(a) ? "MousePrims.isInside" : Vya(a) ? "MousePrims.getX" : Wya(a) ? "MousePrims.getY" : Xya(a) ? "NLMath.abs" : Yya(a) ? "NLMath.acos" : Zya(a) ? "NLMath.asin" : $ya(a) ? "NLMath.atan" : aza(a) ? "NLMath.ceil" : bza(a) ? "NLMath.cos" : cza(a) ? "NLMath.exp" : dza(a) ? "NLMath.floor" : eza(a) ? "NLMath.toInt" : fza(a) ? "NLMath.ln" : gza(a) ? "NLMath.log" : hza(a) ? "NLMath.mod" : iza(a) ? "NLMath.pow" : jza(a) ? "NLMath.precision" : kza(a) ? "NLMath.round" : lza(a) ? "NLMath.sin" : mza(a) ? "NLMath.sqrt" : nza(a) ?
             "NLMath.subtractHeadings" : oza(a) ? "NLMath.tan" : pza(a) ? "ColorModel.nearestColorNumberOfHSB" : qza(a) ? "ColorModel.nearestColorNumberOfRGB" : rza(a) ? "ColorModel.colorToHSB" : sza(a) ? "ColorModel.colorToRGB" : tza(a) ? "ColorModel.hsbToRGB" : uza(a) ? "ColorModel.genRGBFromComponents" : vza(a) ? "ColorModel.scaleColor" : wza(a) ? "ColorModel.areRelatedByShade" : xza(a) ? "ColorModel.wrapColor" : yza(a) ? "Prims.div" : zza(a) ? "world.turtleManager.getTurtle" : Aza(a) ? "world.getPatchAt" : Bza(a) ? "Prims.equality" : Cza(a) ? "!Prims.equality" : Dza(a) ?
             "world.turtles" : Eza(a) ? "world.links" : Fza(a) ? "world.patches" : Gza(a) ? "world.ticker.tickCount" : Hza(a) ? "workspace.timer.elapsed" : Iza(a) ? "Tasks.map" : Jza(a) ? "Prims.random" : Kza(a) ? "Prims.generateNewSeed" : Lza(a) ? "Random.save" : Mza(a) ? "Prims.randomExponential" : Nza(a) ? "Prims.randomFloat" : Oza(a) ? "Prims.randomNormal" : Pza(a) ? "Prims.randomPoisson" : Qza(a) ? "Prims.randomGamma" : Rza(a) ? "Prims.linkSet" : Sza(a) ? "Prims.patchSet" : Tza(a) ? "Prims.turtleSet" : Uza(a) ? "Prims.turtlesOn" : Vza(a) ? "Prims.gt" : Wza(a) ? "Prims.lt" : Xza(a) ?
-            "Prims.gte" : Yza(a) ? "Prims.lte" : Zza(a) ? "world.linkManager.getLink" : $za(a) ? "Tasks.apply" : aAa(a) ? "Prims.boom" : bAa(a) ? "world.observer.subject" : cAa(a) ? "Prims.dateAndTime" : dAa(a) ? "Prims.nanoTime" : eAa(a) ? "UserDialogPrims.yesOrNo" : fAb(a) ? "world.hubnetManager.getHubnetMessageWaiting" : fAc(a) ? "world.hubnetManager.getHubnetEnterMessage" : fAd(a) ? "world.hubnetManager.getHubnetExitMessage" : fAe(a) ? "world.hubnetManager.getHubnetMessage" : fAf(a) ? "world.hubnetManager.getHubnetMessageTag" : fAg(a) ? "world.hubnetManager.getHubnetMessageList" :fAg(a) ? "UserDialogPrims.input" : c.t(a)
+            "Prims.gte" : Yza(a) ? "Prims.lte" : Zza(a) ? "world.linkManager.getLink" : $za(a) ? "Tasks.apply" : aAa(a) ? "Prims.boom" : bAa(a) ? "world.observer.subject" : cAa(a) ? "Prims.dateAndTime" : dAa(a) ? "Prims.nanoTime" : eAa(a) ? "UserDialogPrims.yesOrNo" : fAb(a) ? "world.hubnetManager.getHubnetMessageWaiting" : fAc(a) ? "world.hubnetManager.getHubnetEnterMessage" : fAd(a) ? "world.hubnetManager.getHubnetExitMessage" : fAe(a) ? "world.hubnetManager.getHubnetMessage" : fAf(a) ? "world.hubnetManager.getHubnetMessageTag" : fAg(a) ? "world.hubnetManager.getHubnetMessageSource" :fAa(a) ? "UserDialogPrims.input" : c.t(a)
     };
     l.cb = function(a) {
         return this.gn(a)
@@ -88639,7 +88639,7 @@
         j: 1
     });
 
-    // hubnet-clear-message
+    // hubnet-fetch-message
     function KNab() {
         this.q = this.i = this.h = null;
         this.a = 0
@@ -88651,7 +88651,7 @@
         M(this);
         return this
     };
-    l.x = g("_hubnetclearmessage");
+    l.x = g("_hubnetfetchmessage");
     l.v = g(0);
     l.p = function(a) {
         return ixb(a) && !0
@@ -88708,7 +88708,7 @@
     }
     l.b = m({
         DKA: 0
-    }, !1, "org.nlogo.core.prim.etc._hubnetclearmessage", {
+    }, !1, "org.nlogo.core.prim.etc._hubnetfetchmessage", {
         DKA: 1,
         e: 1,
         ta: 1,
@@ -96166,8 +96166,7 @@
         j: 1
     });
 
-    /*
-    // hubnet-message-list
+    // hubnet-message-source
     function KNai() {
         jZ.call(this)
     }
@@ -96175,10 +96174,10 @@
     KNai.prototype.constructor = KNai;
     l = KNai.prototype;
     l.d = function() {
-        jZ.prototype.dq.call(this, W(I()), (new x).g([]));
+        jZ.prototype.dq.call(this, Ip(I()), (new x).g([]));
         return this
     };
-    l.x = g("_hubnetmessagelist");
+    l.x = g("_hubnetmessagesource");
     l.v = g(0);
     l.p = function(a) {
         return fAd(a) && !0
@@ -96201,7 +96200,7 @@
     }
     l.b = m({
         qNf: 0
-    }, !1, "org.nlogo.core.prim.etc._hubnetmessagelist", {
+    }, !1, "org.nlogo.core.prim.etc._hubnetmessagesource", {
         qNf: 1,
         tr: 1,
         e: 1,
@@ -96213,91 +96212,6 @@
         k: 1,
         j: 1
     });
-*/
-
-function KNai() {
-    this.q = this.i = this.h = null;
-    this.a = 0
-}
-KNai.prototype = new n;
-KNai.prototype.constructor = KNai;
-l = KNai.prototype;
-l.d = function() {
-    M(this);
-    return this
-};
-l.x = g("_hubnetmessagelist");
-l.v = g(0);
-l.p = function(a) {
-    return mAa(a) && !0
-};
-l.P = function(a) {
-    this.i = a;
-    this.a |= 2
-};
-l.w = function(a) {
-    throw (new T).c("" + a);
-};
-l.m = function() {
-    return Z(V(), this)
-};
-l.R = function(a) {
-    this.q = a;
-    this.a |= 4
-};
-l.H = function() {
-    var a = Jp(I()),
-        c = H();
-    I();
-    var d = yc();
-    I();
-    var e = y();
-    I();
-    var f = J();
-    I();
-    var h = J();
-    I();
-    I();
-    I();
-    var k = J();
-    I();
-    return K(new L, c, d, e, a, f, h, !1, "OTPL", k, k.ca())
-};
-l.L = function() {
-    if (0 === (1 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 45");
-    return this.h
-};
-l.N = function(a) {
-    this.h = a;
-    this.a |= 1
-};
-l.s = function() {
-    return Q(P(), this)
-};
-l.z = function() {
-    return $(this)
-};
-l.Q = function() {
-    if (0 === (2 & this.a)) throw (new D).c("Uninitialized field: etc.scala: 45");
-    return this.i
-};
-
-function fAg(a) {
-    return !!(a && a.b && a.b.o.gKa)
-}
-l.b = m({
-    gKa: 0
-}, !1, "org.nlogo.core.prim.etc._hubnetmessagelist", {
-    gKa: 1,
-    e: 1,
-    ea: 1,
-    E: 1,
-    G: 1,
-    y: 1,
-    r: 1,
-    k: 1,
-    j: 1
-});  
 
 
     function LM() {

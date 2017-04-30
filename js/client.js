@@ -1,7 +1,6 @@
 var socket;
 var universe;
-//var commandQueue = [];
-//var reporterQueue = [];
+var commandQueue = [];
 
 jQuery(document).ready(function() {
   var userId;
@@ -22,10 +21,10 @@ jQuery(document).ready(function() {
   socket.on("display interface", function(data) {
     switch (data.userType) {
       case "teacher":
-        Interface.showTeacher();
+        Interface.showTeacher(data.room);
         break;
       case "student":
-        Interface.showStudent();
+        Interface.showStudent(data.room);
         break;
       case "login":
         Interface.showLogin(data.rooms);
@@ -69,8 +68,12 @@ jQuery(document).ready(function() {
   });
   
   socket.on("execute command", function(data) {
-    var messagePackage = [data.hubnetMessageSource, data.hubnetMessageTag, data.hubnetMessage];
-    world.hubnetManager.addToHubnetMessageList(messagePackage);
+    var commandObject = {};
+    commandObject.messageSource = data.hubnetMessageSource;
+    commandObject.messageTag = data.hubnetMessageTag;
+    commandObject.message = data.hubnetMessage;
+    commandQueue.push(commandObject);
+    world.hubnetManager.setHubnetMessageWaiting(true);
   });
   
   // student leaves activity and sees login page

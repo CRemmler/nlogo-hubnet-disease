@@ -21,7 +21,7 @@ Interface = (function() {
   function displayLoginInterface(rooms) {
     setupItems();
     $(".netlogo-tab-area").addClass("hidden");
-    $(".netlogo-export-wrapper").addClass("hidden");    
+    $(".netlogo-export-wrapper").css("display","none");   
     $(".netlogo-speed-slider").css("display","none");
     $(".admin-body").css("display","inline");
     showItems(itemId.loginItems,itemId.totalItems);
@@ -31,29 +31,27 @@ Interface = (function() {
     $("#netlogo-inputBox-30 textarea").addClass("create-room-input");
     $(".join-room-button").addClass("hidden");
     
-    console.log(rooms);
     var roomButtonHtml, roomButtonId;
     for (var i=0; i<rooms.length; i++) {
-      console.log("add "+itemId.loginItems+ " 3 " + i);
       roomButtonHtml = "<div class='netlogo-button-agent-context'>"+
         "<span class='netlogo-label'>"+rooms[i]+"</span></div>";
       roomButtonId = "#netlogo-button-"+(itemId.loginItems+3+i);
-      console.log(roomButtonHtml);
-      console.log(roomButtonId);
       $(roomButtonId).html(roomButtonHtml);
       $(roomButtonId).removeClass("hidden");
     }
   }
 
-  function displayTeacherInterface() {
+  function displayTeacherInterface(room) {
     showItems(itemId.teacherItems, itemId.studentItems);
+    $("#netlogo-title").append(" Room: "+room);
     $(".netlogo-view-container").removeClass("hidden");
     $(".netlogo-tab-area").removeClass("hidden");
     $(".admin-body").css("display","none");
   }
   
-  function displayStudentInterface() {
+  function displayStudentInterface(room) {
     showItems(itemId.studentItems, itemId.loginItems);
+    $("#netlogo-title").append(" Room: "+room);
     $(".netlogo-view-container").removeClass("hidden");
     $(".admin-body").css("display","none");
     $(".netlogo-button:not(.hidden)").addClass("student-button");
@@ -63,7 +61,13 @@ Interface = (function() {
     $(".admin-body").css("display","inline");
     $(".admin-body").html("You have been disconnected. Please refresh the page to continue.");
   }
-
+  
+  function displayAdminInterface(rooms) {
+    $("#noRoomsChosen").css("display","none");
+    $("#netlogo-model-container").addClass("hidden");
+    $("#admin-data").html(rooms);
+  }
+  
   function clearRoom(roomName) {
     socket.emit("clear room", {roomName: roomName});
     //$("#submitRoomString").trigger("click");
@@ -96,6 +100,7 @@ Interface = (function() {
     showTeacher: displayTeacherInterface,
     showStudent: displayStudentInterface,
     showDisconnected: displayDisconnectedInterface,
+    showAdmin: displayAdminInterface,
     clearRoom: clearRoom
   };
 
