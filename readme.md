@@ -29,8 +29,6 @@
 
 ## Convert a NetLogo Hubnet Activity to Web
 - Open NetLogo Hubnet Activity in NetLogo java app. Save as NetLogo Web.
-- Re-create Client Interface. Save as NetLogo Web.
 - Copy and paste data from $("#nlogo-code") into index.html
-- Copy and paste new client interface into index.html
 - Update config file to match model
 - Update js/events.js for any sliders on student's interface (not currently generalizable)
