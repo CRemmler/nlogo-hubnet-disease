@@ -95,7 +95,7 @@ io.on('connection', function(socket){
 	});	
   
 	// store updates to world
-  socket.on("update", function(data) {
+	socket.on("update", function(data) {
 		var myRoom = socket.myRoom;
 		var userId;
 		var turtleId;
@@ -119,7 +119,7 @@ io.on('connection', function(socket){
 				}
 			}
 		}
-  });
+	});
 	
 	// pass command from student to teacher
 	socket.on("send command", function(data) {
