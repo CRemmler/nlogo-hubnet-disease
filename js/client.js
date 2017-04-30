@@ -21,13 +21,13 @@ jQuery(document).ready(function() {
   socket.on("display interface", function(data) {
     switch (data.userType) {
       case "teacher":
-        Interface.showTeacher(data.room);
+        Interface.showTeacher(data.room, data.components);
         break;
       case "student":
-        Interface.showStudent(data.room);
+        Interface.showStudent(data.room, data.components);
         break;
       case "login":
-        Interface.showLogin(data.rooms);
+        Interface.showLogin(data.rooms, data.components);
         break;
       case "disconnected":
         Interface.showDisconnected();
@@ -50,21 +50,10 @@ jQuery(document).ready(function() {
   socket.on("display admin", function(data) {
     $("#adminData").html(data.roomData);
   });
-  
+
   // students display reporters
   socket.on("display reporter", function(data) {
-    //console.log("display reporter", data);
-    switch (data.hubnetMessageTag) {
-      case "You are a:":
-        $("#netlogo-monitor-27 output").html(data.hubnetMessage);
-        break;
-      case "Located at:":
-        $("#netlogo-monitor-28 output").html(data.hubnetMessage);
-        break;
-      case "Sick?":
-        $("#netlogo-monitor-29 output").html(data.hubnetMessage);
-        break;
-    }
+    $(data.components[data.hubnetMessageTag]).html(data.hubnetMessage);
   });
   
   socket.on("execute command", function(data) {

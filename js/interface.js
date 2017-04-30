@@ -1,56 +1,38 @@
 Interface = (function() {
 
-  //////////////////////////////////////////
-  // DISEASE - Client Buttons and Sliders //
-  //////////////////////////////////////////
-  // items are NetLogo interface components like button, slider...
-  var itemId = {
-    "teacherItems": 0,    // teacher items have id's from 0-20
-    "studentItems": 21,   // student items have id's from 21-29
-    "loginItems": 30,     // login items have id's from 30-42
-    "totalItems": 43
-  }
-  var createRoomButton = "32";
-  var createRoomInput = "30";
-  /////////
-  // END //
-  /////////
-
   var items = {};
-  
-  function displayLoginInterface(rooms) {
+
+  function displayLoginInterface(rooms, components) {
+    var roomButtonHtml, roomButtonId;
     setupItems();
     $(".netlogo-tab-area").addClass("hidden");
     $(".netlogo-export-wrapper").css("display","none");   
     $(".netlogo-speed-slider").css("display","none");
     $(".admin-body").css("display","inline");
-    showItems(itemId.loginItems,itemId.totalItems);
-    
-    $("#netlogo-button-"+createRoomButton).addClass("create-room-button");
+    showItems(components.componentRange[0], components.componentRange[1]);
+    $(components.createRoomButton).addClass("create-room-button");
     $(".netlogo-button:not(.hidden):not(.create-room-button)").addClass("join-room-button");
-    $("#netlogo-inputBox-30 textarea").addClass("create-room-input");
+    $(components.createRoomInput).addClass("create-room-input");
     $(".join-room-button").addClass("hidden");
-    
-    var roomButtonHtml, roomButtonId;
     for (var i=0; i<rooms.length; i++) {
       roomButtonHtml = "<div class='netlogo-button-agent-context'>"+
         "<span class='netlogo-label'>"+rooms[i]+"</span></div>";
-      roomButtonId = "#netlogo-button-"+(itemId.loginItems+3+i);
+      roomButtonId = components.joinRoomButtons[i];
       $(roomButtonId).html(roomButtonHtml);
       $(roomButtonId).removeClass("hidden");
     }
   }
 
-  function displayTeacherInterface(room) {
-    showItems(itemId.teacherItems, itemId.studentItems);
+  function displayTeacherInterface(room, components) {
+    showItems(components.componentRange[0], components.componentRange[1]);
     $("#netlogo-title").append(" Room: "+room);
     $(".netlogo-view-container").removeClass("hidden");
     $(".netlogo-tab-area").removeClass("hidden");
     $(".admin-body").css("display","none");
   }
   
-  function displayStudentInterface(room) {
-    showItems(itemId.studentItems, itemId.loginItems);
+  function displayStudentInterface(room, components) {
+    showItems(components.componentRange[0], components.componentRange[1]);
     $("#netlogo-title").append(" Room: "+room);
     $(".netlogo-view-container").removeClass("hidden");
     $(".admin-body").css("display","none");
@@ -90,7 +72,7 @@ Interface = (function() {
   function showItems(min, max) {
     $(".netlogo-widget").addClass("hidden");
     $(".netlogo-model-title").removeClass("hidden");
-    for (var i=min; i<max; i++) {
+    for (var i=min; i<=max; i++) {
       $("#"+items[i]).removeClass("hidden");
     }
   }

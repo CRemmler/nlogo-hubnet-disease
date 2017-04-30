@@ -2,9 +2,9 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var express = require('express');
+var config = require('./config.json');
 const PORT = process.env.PORT || 3000;
 var myTimer;
-
 var roomData = {};
 
 app.use(express.static(__dirname));
@@ -17,7 +17,7 @@ io.on('connection', function(socket){
 	
 	var rooms = [];
 	for (var key in roomData) { rooms.push(key); }
-	socket.emit("display interface", {userType: "login", rooms: rooms});
+	socket.emit("display interface", {userType: "login", rooms: rooms, components: config.interfaceJs.loginComponents});
 	socket.join("login");
 	
 	function enableTimer() {
@@ -42,53 +42,42 @@ io.on('connection', function(socket){
 		socket.leave("login");
 		if (data.room === "admin") {
 			socket.emit("display admin", {roomData: getRoomData()});
-			
 		} else {
-		
 			// if user is first to enter a room, and only one room exists, then enable the timer
 			if (Object.keys(roomData).length === 0) { enableTimer(); }
-			
 			// declare myRoom
 			socket.myRoom = data.room;
 			var myRoom = socket.myRoom;
-				
 			if (!roomData[myRoom]) {
 				roomData[myRoom] = {};
 				roomData[myRoom].teacherInRoom = false;
 				roomData[myRoom].turtles = {};
 				roomData[myRoom].turtleDict = {};
 				roomData[myRoom].userIdDict = {};
-				//roomData[myRoom].updateTurtles = {};
 			}
-			
 			// declare myUserType, first user in is a teacher, rest are students
 			socket.myUserType = (!roomData[myRoom].teacherInRoom) ? "teacher" : "student";
 			myUserType = socket.myUserType;
-			
 			// declare myUserId
 			myUserId = socket.id;
-	    
 			// send settings to client
 			socket.emit("save settings", {userType: myUserType, userId: myUserId});
-
 			// join myRoom
 			socket.join(myRoom+"-"+myUserType);
-			
 			// tell teacher or student to display their interface
-			socket.emit("display interface", {userType: socket.myUserType, room: myRoom});
-	    
+			//socket.emit("display interface", {userType: socket.myUserType, room: myRoom});
 			if (myUserType === "teacher") {
+				socket.emit("display interface", {userType: "teacher", room: myRoom, components: config.interfaceJs.teacherComponents});
 				// remember that there is already a teacher in room
 				roomData[myRoom].teacherInRoom = true;
 				roomData[myRoom].userIdDict["teacher"] = myUserId;
-					
 				//send to all students on intro page
 				rooms = [];
 				for (var key in roomData) { rooms.push(key); }
-				socket.to("login").emit("display interface", {userType: "login", rooms: rooms});
-					
+				socket.to("login").emit("display interface", {userType: "login", rooms: rooms, components: config.interfaceJs.loginComponents});
 			} else {
 				// send teacher a hubnet-enter-message
+				socket.emit("display interface", {userType: "student", room: myRoom, components: config.interfaceJs.studentComponents});
 				socket.to(myRoom+"-teacher").emit("execute command", {hubnetMessageSource: myUserId, hubnetMessageTag: "hubnet-enter-message", hubnetMessage: ""});
 			}
 		}
@@ -123,7 +112,6 @@ io.on('connection', function(socket){
 	
 	// pass command from student to teacher
 	socket.on("send command", function(data) {
-		//console.log(data.hubnetMessageTag+" "+data.hubnetMessage);
 		var myRoom = socket.myRoom;
 		var myUserId = socket.id;
 		socket.to(myRoom+"-teacher").emit("execute command", {
@@ -139,7 +127,8 @@ io.on('connection', function(socket){
 		io.to(userId).emit("display reporter", {
 			hubnetMessageSource: userId,
 			hubnetMessageTag: data.hubnetMessageTag,
-			hubnetMessage: data.hubnetMessage
+			hubnetMessage: data.hubnetMessage,
+			components: config.clientJs.reporterComponents
 		});
 	});
 	
