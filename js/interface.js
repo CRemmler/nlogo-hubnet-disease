@@ -42,6 +42,7 @@ Interface = (function() {
   function displayDisconnectedInterface() {
     $(".admin-body").css("display","inline");
     $(".admin-body").html("You have been disconnected. Please refresh the page to continue.");
+    $("#netlogo-model-container").addClass("hidden");
   }
   
   function displayAdminInterface(rooms) {
