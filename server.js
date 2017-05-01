@@ -25,7 +25,9 @@ io.on('connection', function(socket){
 		var myTimer = setInterval(function() {
 			for (var key in roomData) {
 				if (socket) {
-					socket.to(key+"-student").emit("send update", {turtles: roomData[key].turtles});	
+					socket.to(key+"-student").emit("send update", {turtles: roomData[key].turtleUpdates, patches: roomData[key].patchUpdates});	
+					roomData[key].turtleUpdates = {};
+					roomData[key].patchUpdates = {};
 				}
 			}
 		}, 250);
@@ -52,6 +54,9 @@ io.on('connection', function(socket){
 				roomData[myRoom] = {};
 				roomData[myRoom].teacherInRoom = false;
 				roomData[myRoom].turtles = {};
+				roomData[myRoom].patches = {};
+				roomData[myRoom].turtleUpdates = {};
+				roomData[myRoom].patchUpdates = {};
 				roomData[myRoom].turtleDict = {};
 				roomData[myRoom].userIdDict = {};
 			}
@@ -87,9 +92,8 @@ io.on('connection', function(socket){
 	socket.on("update", function(data) {
 		var myRoom = socket.myRoom;
 		var userId;
-		var turtleId;
-		var turtle;
-		var reporterTurtle;
+		var turtleId, turtle;
+		var patchId, patch;
 		
 		for (var key in data.turtles) 
 		{
@@ -101,10 +105,31 @@ io.on('connection', function(socket){
 				roomData[myRoom].turtleDict[userId] = turtleId;
 				roomData[myRoom].userIdDict[turtleId] = userId;	
 				roomData[myRoom].turtles[turtleId] = {};
+			}
+			if (roomData[myRoom].turtleUpdates[turtleId] === undefined) {		
+				roomData[myRoom].turtleUpdates[turtleId] = {};
 			} 
 			if (Object.keys(turtle).length > 0) {
 				for (var attribute in turtle) {
 					roomData[myRoom].turtles[turtleId][attribute] = turtle[attribute];
+					roomData[myRoom].turtleUpdates[turtleId][attribute] = turtle[attribute];
+				}
+			}
+		}
+		for (var key in data.patches) 
+		{
+			patch = data.patches[key];
+			patchId = key;
+			if (roomData[myRoom].patches[patchId] === undefined) {
+				roomData[myRoom].patches[patchId] = {};
+			} 
+			if (roomData[myRoom].patchUpdates[patchId] === undefined) {
+				roomData[myRoom].patchUpdates[patchId] = {};
+			} 
+			if (Object.keys(patch).length > 0) {
+				for (var attribute in patch) {
+					roomData[myRoom].patches[patchId][attribute] = patch[attribute];
+					roomData[myRoom].patchUpdates[patchId][attribute] = patch[attribute];
 				}
 			}
 		}
