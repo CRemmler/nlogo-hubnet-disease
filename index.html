@@ -60100,24 +60100,6 @@ if count turtles with [infected?] > 0
 ]
 end
 
-to go-0.25
-;; CR add a "go" button, that repeats every 0.25.
-listen-clients
-every 0.25 [
-;;allow the androids to wander around the view
-if wander? [ androids-wander ]
-ask turtles with [ infected? ]
-[ spread-disease ]
-if count turtles with [infected?] > 0
-[ 
-  tick 
-  let n count turtles with [infected?]
-    plotxy ticks - 1 n
-    set num-infected-last-plotted n 
-]
-]
-end
-
 ;; controls the motion of the androids
 to androids-wander
 every android-delay
@@ -60697,7 +60679,7 @@ BUTTON
 180
 366
 clear-plot
-clear-all-plots\nset run-number 0
+clear-all-plots\nset run-number 0\nreset-ticks\n set num-infected-last-plotted 0\n create-temporary-plot-pen "run1" 
 NIL
 1
 T

@@ -162,7 +162,9 @@ io.on('connection', function(socket){
 		var myRoom = data.roomName;
 		if (roomData[myRoom]) {
 			socket.to(myRoom+"-teacher").emit("display interface", {userType: "disconnected"});
-			io.sockets.sockets[roomData[myRoom].userIdDict["teacher"]].disconnect();			
+			if (io.sockets.sockets[roomData[myRoom].userIdDict["teacher"]]) {
+				io.sockets.sockets[roomData[myRoom].userIdDict["teacher"]].disconnect();
+			}
 		}
 	});
 	
